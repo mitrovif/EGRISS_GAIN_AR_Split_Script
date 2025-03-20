@@ -3,6 +3,9 @@
 # Map Additional to GAIN 1: Prepare World Map (Remove Arctic & Antarctica) # to work more on maps later
 # ======================================================
 
+# Load world map data
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
 # Remove Antarctica from the world dataset
 world_filtered <- world %>%
   filter(!grepl("Antarctica", name))  # Exclude Antarctica
