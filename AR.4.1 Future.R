@@ -2,6 +2,8 @@
 # Add Future Projects 
 # =============================================================================================================
 
+fpr05_columns <- grep("^FPR05", names(group_roster2), value = TRUE)
+
 sapply(group_roster2[, fpr05_columns], class)
 group_roster2 <- group_roster2 %>%
   mutate(across(all_of(fpr05_columns), ~ as.numeric(.)))
