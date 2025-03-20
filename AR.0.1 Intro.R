@@ -1,6 +1,7 @@
 # ======================================================
 # Set Working Directory Dynamically
 # ======================================================
+
 # Copy-Paste your Windows file path (with backslashes)
 working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-03-12_10-04-14"
 
@@ -39,6 +40,9 @@ background_color <- "#f0f8ff"
 # Load dataset
 group_roster_file <- file.path(working_dir, "analysis_ready_group_roster.csv")
 group_roster <- read.csv(group_roster_file)
+
+group_roster_file2 <- file.path(working_dir, "analysis_ready_group_roster2.csv")
+group_roster2 <- read.csv(group_roster_file2)
 
 # Function to create styled flextables
 create_flextable <- function(data, title) {
