@@ -57,11 +57,27 @@ word_doc <- word_doc %>%
   body_add_break() %>%
   body_add_par("Breakdown of Nationally Led Partnerships by Year and Type", style = "heading 2") %>%
   body_add_flextable(partnership_flextable) %>%
+  # Add AR.4.2_Future table
+  body_add_break() %>%
+  body_add_par("AR.4.2: Future Projects Overview", style = "heading 2") %>%
+  body_add_flextable(AR.4.2_Future) %>%
+  body_add_break() %>%
   body_add_break() %>%
   body_add_flextable(organization_mentions_flextable) %>%
   body_add_break() %>%
   body_add_par("Summary Table: GFR Data on Pledges", style = "heading 2") %>%
   body_add_flextable(grf_flextable) %>%
+  
+  
+  # Add AR.6.1 table AR.6.2 and AR.6.3 at the End
+  body_add_par("AR.6.1: Initial Overview of Publications", style = "heading 2") %>%
+  body_add_flextable(AR.6.1) %>%
+  body_add_break() %>%
+  body_add_par("AR.6.2: Overview of Respondents Using Publications", style = "heading 2") %>%
+  body_add_flextable(ar.6.2) %>%
+  body_add_break() %>%
+  body_add_par("AR.6.3: Overview of Publications' Impact", style = "heading 2") %>%
+  body_add_flextable(ar.6.3) %>%
   
   # Finish the document with continuous section (portrait by default)
   body_end_section_continuous()
@@ -80,4 +96,4 @@ word_output_file <- file.path(working_dir, paste0("Annual_Report_GAIN_2024_", cu
 print(word_doc, target = word_output_file)
 
 # ✅ Confirm success
-message("Updated GAIN 2024 Annual Report saved successfully at: ", word_output_file)
+message("Updated GAIN 2024 Annual Report saved successfully at: ", word_output_file)message("Updated GAIN 2024 Annual Report saved successfully at: ", word_output_file)
