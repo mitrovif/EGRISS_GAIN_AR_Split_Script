@@ -77,7 +77,7 @@ figure7 <- flextable(recuse_table) %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   autofit() %>%
-  border_outer(border = fp_border(color = "black", width = 1)) %>%  # Added outer border
+  border_outer(border = fp_border(color = "black", width = 2)) %>%  # Added outer border
   bg(i = 1, bg = iris_color, part = "body") %>%  # IRIS
   bg(i = 2, bg = irrs_color, part = "body") %>%  # IRRS
   bg(i = 3, bg = iross_color, part = "body") %>%  # IROSS
