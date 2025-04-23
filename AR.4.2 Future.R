@@ -108,7 +108,10 @@ quarter_summary <- group_roster2 %>%
   count(Quarter, Source_Variable) %>%
   pivot_wider(names_from = Source_Variable, values_from = n, values_fill = 0)
 
+# ==========================================================
 # Table 2: FPR05 as columns and Populations as rows
+# ==========================================================
+
 population_summary <- group_roster2 %>%
   pivot_longer(
     cols = starts_with("FPR05."),
@@ -116,13 +119,19 @@ population_summary <- group_roster2 %>%
     values_to = "Value"
   ) %>%
   filter(Value == 1) %>%
-  pivot_longer(
-    cols = starts_with("FPR04."),
-    names_to = "Population_Variable",
-    values_to = "Pop_Value"
-  ) %>%
-  filter(Pop_Value == 1) %>%
   mutate(
+    Refugee = if_else(`FPR04.A` == 1, 1, 0),
+    IDP = if_else(`FPR04.B` == 1, 1, 0),
+    Stateless = if_else(`FPR04.C` == 1, 1, 0)
+  ) %>%
+  mutate(
+    Population_Type = case_when(
+      Refugee + IDP + Stateless == 1 & Refugee == 1 ~ "Refugee Only",
+      Refugee + IDP + Stateless == 1 & IDP == 1 ~ "IDP Only",
+      Refugee + IDP + Stateless == 1 & Stateless == 1 ~ "Stateless Only",
+      Refugee + IDP + Stateless > 1 ~ "Mixed",
+      TRUE ~ "Other"
+    ),
     Source_Variable = recode(Source_Variable,
                              "FPR05.A" = "Survey",
                              "FPR05.B" = "Administrative Data",
@@ -133,16 +142,15 @@ population_summary <- group_roster2 %>%
                              "FPR05.G" = "Guidance/Toolkit",
                              "FPR05.H" = "Workshop/Training",
                              "FPR05.X" = "Other"
-    ),
-    Population_Variable = recode(Population_Variable,
-                                 "FPR04.A" = "Refugees",
-                                 "FPR04.B" = "IDPs",
-                                 "FPR04.C" = "Stateless Populations",
-                                 "FPR04.X" = "Other Populations"
     )
   ) %>%
-  count(Population_Variable, Source_Variable) %>%
+  count(Population_Type, Source_Variable) %>%
   pivot_wider(names_from = Source_Variable, values_from = n, values_fill = 0)
+
+
+# Output the new population-specific table
+list(population_summary_flextable)
+
 
 # Create FlexTables for Word
 quarter_summary_flextable <- flextable(quarter_summary) %>%
@@ -155,7 +163,8 @@ population_summary_flextable <- flextable(population_summary) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   autofit() %>%
-  set_caption(caption = "Future Projects Breakdown by Population")
+  set_caption(caption = "Future Projects Breakdown by Population Type")
+
 # Table 3: FPR05 as columns and Region as rows
 region_summary <- group_roster2 %>%
   pivot_longer(
@@ -186,6 +195,40 @@ region_summary_flextable <- flextable(region_summary) %>%
   bold(part = "header") %>%
   autofit() %>%
   set_caption(caption = "Future Projects Breakdown by Region")
+# Add LOC01 Breakdown
+
+group_roster2 <- group_roster2 %>%
+  mutate(LOC01 = as.numeric(LOC01)) %>%
+  mutate(
+    LOC01_Category = case_when(
+      LOC01 == 1 ~ "Country (NSO or Other in NSS)",
+      LOC01 %in% c(2, 3) ~ "International (International Organization or CSO)",
+      TRUE ~ "Other"
+    )
+  )
+# Table 4: Separate LOC01 Breakdown
+loc01_summary <- group_roster2 %>%
+  pivot_longer(
+    cols = starts_with("FPR05."),
+    names_to = "Source_Variable",
+    values_to = "Value"
+  ) %>%
+  filter(Value == 1) %>%
+  mutate(
+    Source_Variable = recode(Source_Variable,
+                             "FPR05.A" = "Survey",
+                             "FPR05.B" = "Administrative Data",
+                             "FPR05.C" = "Census",
+                             "FPR05.D" = "Data Integration",
+                             "FPR05.E" = "Non-Traditional",
+                             "FPR05.F" = "Strategy",
+                             "FPR05.G" = "Guidance/Toolkit",
+                             "FPR05.H" = "Workshop/Training",
+                             "FPR05.X" = "Other"
+    )
+  ) %>%
+  count(LOC01_Category, Source_Variable) %>%
+  pivot_wider(names_from = Source_Variable, values_from = n, values_fill = 0)
 
 # ==========================================================
 # Combined Table for Quarters, Populations, and Regions
@@ -197,31 +240,43 @@ quarter_summary <- quarter_summary %>%
   select(Category, Label, everything(), -Quarter)
 
 population_summary <- population_summary %>%
-  mutate(Category = "Population", Label = Population_Variable) %>%
-  select(Category, Label, everything(), -Population_Variable)
+  mutate(Category = "Population", Label = Population_Type) %>%  # Corrected to Population_Type
+  select(Category, Label, everything(), -Population_Type)
 
 region_summary <- region_summary %>%
   mutate(Category = "Region", Label = region) %>%
   select(Category, Label, everything(), -region)
 
+loc01_summary <- loc01_summary %>%
+  mutate(Category = "Type of Example", Label = LOC01_Category) %>%
+  select(Category, Label, everything(), -LOC01_Category)
+
 # Combine all tables
-merged_data <- bind_rows(quarter_summary, population_summary, region_summary)
+merged_data <- bind_rows(quarter_summary, population_summary, region_summary, loc01_summary)
 
 # Clean up Category to show only once per section
 merged_data$Category <- ifelse(duplicated(merged_data$Category), "", merged_data$Category)
+# ==========================================================
+# Create FlexTable for Merged Table with Column Totals Only
+# ==========================================================
 
-# Create FlexTable for Merged Table
+# Add total columns
+merged_data <- merged_data %>%
+  mutate(Total = rowSums(across(where(is.numeric)), na.rm = TRUE))
+
 merged_summary_flextable <- flextable(merged_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bold(i = ~ Category == "Quarter", bold = TRUE, part = "body") %>%
   bold(i = ~ Category == "Population", bold = TRUE, part = "body") %>%
   bold(i = ~ Category == "Region", bold = TRUE, part = "body") %>%
+  bold(i = ~ Category == "Type of Example", bold = TRUE, part = "body") %>%
   autofit() %>%
-  set_caption(caption = "Combined Future Projects Breakdown")
+  set_caption(caption = "Combined Future Projects Breakdown Including Type of Example with Column Totals")
 
 # Output the tables
 list(quarter_summary_flextable, population_summary_flextable, region_summary_flextable, merged_summary_flextable)
+
 # Rename the merged flextable and apply beautification
 header_color <- "#4cc3c9"
 
@@ -233,6 +288,6 @@ AR.4.2_Future <- flextable(merged_data) %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 9, part = "body") %>%
   set_table_properties(layout = "autofit") %>%
-  set_caption("AR.4.2 Future Projects Overview")
+  set_caption("AR.4.2 Future Projects Overview Including Type of Example with Column Totals")
 
 AR.4.2_Future

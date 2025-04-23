@@ -1,9 +1,7 @@
 # ======================================================
 # Set Working Directory Dynamically
 # ======================================================
-
 # Copy-Paste your Windows file path (with backslashes)
-working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-03-12_10-04-14"
 working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-03-20_11-21-50"
 
 # Automatically replace backslashes (\) with forward slashes (/)
@@ -42,9 +40,6 @@ background_color <- "#f0f8ff"
 group_roster_file <- file.path(working_dir, "analysis_ready_group_roster.csv")
 group_roster <- read.csv(group_roster_file)
 
-group_roster_file2 <- file.path(working_dir, "analysis_ready_group_roster2.csv")
-group_roster2 <- read.csv(group_roster_file2)
-
 # Function to create styled flextables
 create_flextable <- function(data, title) {
   flextable(data) %>%
@@ -65,7 +60,7 @@ create_flextable <- function(data, title) {
 # ======================================================
 
 # Define the path for additional scripts
-scripts_dir <- "C:/Users/mitro/OneDrive/Desktop/AR Script"
+scripts_dir <- "C:/Users/mitro/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024/11 Reporting/AR Data Split Script"
 
 # Overall files
 source(file.path(scripts_dir, "AR.1.1 Overall.R"))

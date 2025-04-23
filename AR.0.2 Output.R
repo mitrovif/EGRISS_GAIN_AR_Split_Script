@@ -96,5 +96,4 @@ word_output_file <- file.path(working_dir, paste0("Annual_Report_GAIN_2024_", cu
 print(word_doc, target = word_output_file)
 
 # ✅ Confirm success
-message("Updated GAIN 2024 Annual Report saved successfully at: ", word_output_file)message("Updated GAIN 2024 Annual Report saved successfully at: ", word_output_file)
 message("Updated GAIN 2024 Annual Report saved successfully at: ", word_output_file)
