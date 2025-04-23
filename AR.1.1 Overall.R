@@ -141,7 +141,7 @@ figure6 <- flextable(merged_df) %>%
   bold(part = "header") %>%
   bg(part = "header", bg = primary_color) %>%
   autofit() %>% 
-  border_outer(border = fp_border(color = "black", width = 1)) %>%  # Added outer border
+  border_outer(border = fp_border(color = "black", width = 2)) %>%  # Added outer border
   delete_columns(j = c("g_conled", "PRO09")) %>%  # Remove g_conled & PRO09
   color(i = 1:2, color = secondary_color, part = "body") %>%  
   color(i = 3:4, color = primary_color, part = "body") %>%  
