@@ -29,6 +29,8 @@ library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(patchwork)  # For arranging plots
+library(magick)
+library(grid)
 
 # EGRISS Color Scheme
 primary_color <- "#4cc3c9"
