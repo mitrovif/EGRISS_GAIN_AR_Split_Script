@@ -55,15 +55,17 @@ text1 <- flextable(regional_data_combined) %>%
   
   # Apply black border styling for "Overall Country-led Example"
   border(i = which(regional_data_combined$`Example Category` == "Overall Country-led Example"), 
-         border.top = default_border, 
-         border.bottom = default_border, 
-         border.left = default_border, 
-         border.right = default_border) %>%
+         border.top = fp_border(color = "gray", width = 0.5), 
+         border.bottom = fp_border(color = "gray", width = 0.5), 
+         border.left = fp_border(color = "gray", width = 0.5), 
+         border.right = fp_border(color = "gray", width = 0.5)) %>%
+  
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
   
   # Footer details
   add_footer_row(
     values = paste0(
-      "Graph Data: Country-led Example Using Recommendations refers to country-led projects that explicitly use EGRISS recommendations. ",
+      "Footnote: Graph Data: Country-led Example Using Recommendations refers to country-led projects that explicitly use EGRISS recommendations. ",
       "This section highlights the regional distribution of cases where national statistical offices or institutions reported following EGRISS guidance. ",
       "The data is collected based on responses to PRO09, indicating direct implementation of statistical recommendations in forced displacement data collection efforts."
     ),
