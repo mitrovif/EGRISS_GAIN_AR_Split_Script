@@ -57,20 +57,22 @@ partnership_data <- bind_rows(nationally_led_count, partnership_count, partnersh
 
 # Ensure Year Order in Columns
 partnership_data <- partnership_data %>%
-  select(Partnership_Type, all_of(year_order))
+  mutate('Partnership Type' = Partnership_Type) %>%
+  select('Partnership Type', all_of(year_order))
 
 # Create FlexTable with EGRISS Color Scheme
 partnership_flextable <- flextable(partnership_data) %>%
-  theme_booktabs() %>%
+  theme_vanilla() %>%
   bold(part = "header") %>%
   set_table_properties(width = 1, layout = "autofit") %>%
-  bg(bg = background_color, part = "body") %>%  # Apply background color
+  fontsize(size = 10, part = "all") %>%
+  bg(bg = "white", part = "body") %>%  # Apply background color
   bg(bg = primary_color, part = "header") %>%  # Apply primary color to header
-  color(color = "white", part = "header") %>%  # Set header text color to white
-  bold(j = 1, part = "body") %>%  # Bold the first column (Partnership Type)
+  color(color = "black", part = "header") %>%  # Set header text color to black
+  # bold(j = 1, part = "body") %>%  # Bold the first column (Partnership Type)
   border_remove() %>%
-  border_outer(part = "all", border = fp_border(color = accent_color, width = 1.5)) %>%
-  border_inner_h(part = "body", border = fp_border(color = secondary_color, width = 1)) %>%
+  border_outer(part = "all", border = fp_border(color = "black", width = 1.5)) %>%
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 1)) %>%
   set_caption("Breakdown of Nationally Led Partnerships by Year and Type") %>%
   autofit()
 
