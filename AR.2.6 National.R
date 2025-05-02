@@ -59,6 +59,8 @@ section_header_color <- "#f3f3f3"  # Light grey for section headers
 organization_mentions_flextable <- flextable(mention_counts) %>%
   theme_vanilla() %>%  # Base theme
   fontsize(size = 10, part = "all") %>%  # Set font size
+  border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 1)) %>%
   bold(part = "header") %>%  # Bold the header
   bg(part = "header", bg = "#4cc3c9") %>%  # Set header background color
   autofit() %>%  # Auto-adjust column widths
