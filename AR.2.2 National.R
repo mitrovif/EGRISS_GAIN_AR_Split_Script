@@ -128,14 +128,16 @@ figure8_flextable <- flextable(aggregated_data) %>%
   
   # Reset to default borders for Overall Institution Examples
   border(i = which(aggregated_data$`Example Category` == "Overall Institution Examples"), 
-         border.top = default_border) %>%
+         border.top = fp_border(color = "gray", width = 0.5)) %>%
   border(i = which(aggregated_data$`Example Category` == "Overall Institution Examples"), 
-         border.bottom = default_border) %>%
+         border.bottom = fp_border(color = "gray", width = 0.5)) %>%
+  
+  border_outer(border = fp_border(color = "black", width = 2)) %>%  # Outer border
   
   # Footer details
   add_footer_row(
     values = paste0(
-      "Graph Data National Examples are based on the implementation of statistical frameworks (IRRS, IRIS, IROSS) in 2024. ",
+      "Footnote: Graph Data National Examples are based on the implementation of statistical frameworks (IRRS, IRIS, IROSS) in 2024. ",
       "Nationally and institutionally led examples are categorized by the type of data source used. ",
       "• Survey: Data collected through sample surveys. ",
       "• Census: Information obtained through national population censuses. ",
