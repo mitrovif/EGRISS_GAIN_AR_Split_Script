@@ -17,7 +17,7 @@ country_list_flextable <- flextable(list_countries_by_region(group_roster)) %>%
   # Add footer row with the footnote text (after deleting the column)
   add_footer_row(values = "Footnote: This table presents the list of countries for each region based on metadata information.",
                  colwidths = ncol(list_countries_by_region(group_roster)) - 1) %>%  # Adjust colwidths due to the column deletion
-  
+  fontsize(size = 7, part = "footer") %>%
   set_caption("List of Countries by Region")
 
 # Display Second Table
