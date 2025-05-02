@@ -3,6 +3,20 @@
 # Unique Country List
 #============================================================================================================
 
+# Function to list countries by region
+list_countries_by_region <- function(group_roster) {
+  df <- group_roster %>%
+    filter(PRO09 == 1) %>%
+    group_by(region, ryear) %>%
+    summarise(countries = paste(unique(mcountry), collapse = ", ")) %>%
+    arrange(region, desc(ryear)) %>%
+    pivot_wider(names_from = region, values_from = countries, values_fill = "") %>%
+    mutate(`Year` = as.character(ryear)) %>%
+    relocate(`Year`, .before = everything())
+  
+  return(df)
+}
+
 # List of Countries by Region
 country_list_flextable <- flextable(list_countries_by_region(group_roster)) %>%
   delete_columns(j = "ryear") %>%
