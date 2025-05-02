@@ -69,7 +69,7 @@ partnership_flextable <- flextable(partnership_data) %>%
   color(color = "white", part = "header") %>%  # Set header text color to white
   bold(j = 1, part = "body") %>%  # Bold the first column (Partnership Type)
   border_remove() %>%
-  border_outer(part = "all", border = fp_border(color = accent_color, width = 1.5)) %>%
+  border_outer(part = "all", border = fp_border(color = accent_color, width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = secondary_color, width = 1)) %>%
   set_caption("Breakdown of Nationally Led Partnerships by Year and Type") %>%
   autofit()
