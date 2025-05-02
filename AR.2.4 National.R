@@ -98,7 +98,7 @@ figure9 <- flextable(combined_data) %>%
   bold(part = "header") %>%
   bg(part = "header", bg = header_color) %>%  # Light Blue Header
   bg(i = highlight_rows, bg = gray_highlight, part = "body") %>%  # Highlight Correct Rows
-  border_outer(part = "all", border = border_style) %>%  # Outer Border for Entire Table
+  border_outer(border = fp_border(color = "black", width = 2)) %>%  # Outer Border for Entire Table
   autofit() %>%
   add_footer_row(
     values = paste0(
