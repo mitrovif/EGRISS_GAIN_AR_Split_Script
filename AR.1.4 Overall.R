@@ -95,7 +95,7 @@ unique_country_flextable <- flextable(final_unique_country_table) %>%
   
   merge_v(j = ~ `Leadership`) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  border_inner(border = fp_border(color = "gray", width = 0.5)) %>%
+  # border_inner(border = fp_border(color = "gray", width = 0.5)) %>%
   
   # AutoFit for Optimal Sizing
   set_table_properties(width = 0.5, layout = "autofit") %>%
