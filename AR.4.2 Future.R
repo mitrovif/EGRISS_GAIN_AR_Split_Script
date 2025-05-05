@@ -264,6 +264,10 @@ merged_data$Category <- ifelse(duplicated(merged_data$Category), "", merged_data
 merged_data <- merged_data %>%
   mutate(Total = rowSums(across(where(is.numeric)), na.rm = TRUE))
 
+merged_data <- merged_data %>%
+  mutate(across(1, ~na_if(., ""))) %>%  # Convert empty strings to NA
+  fill(1)
+
 merged_summary_flextable <- flextable(merged_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
@@ -281,13 +285,18 @@ list(quarter_summary_flextable, population_summary_flextable, region_summary_fle
 header_color <- "#4cc3c9"
 
 AR.4.2_Future <- flextable(merged_data) %>%
-  theme_booktabs() %>%
+  theme_vanilla() %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
-  color(color = "white", part = "header") %>%
+  color(color = "black", part = "header") %>%
   fontsize(size = 10, part = "header") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
+  border_inner_v(border = fp_border(color = "gray", width = 0.5), part = "body") %>%  # Only vertical borders in body
+  border_inner_h(border = fp_border(color = "gray", width = 0.5), part = "all") %>%  # Keep horizontal borders
+  merge_v(j = 1) %>%  # Merge vertical cells in first column
   fontsize(size = 9, part = "body") %>%
   set_table_properties(layout = "autofit") %>%
-  set_caption("AR.4.2 Future Projects Overview Including Type of Example with Column Totals")
+  set_caption("AR.4.2 Future Projects Overview Including Type of Example with Column Totals") %>%
+  fix_border_issues()
 
 AR.4.2_Future
