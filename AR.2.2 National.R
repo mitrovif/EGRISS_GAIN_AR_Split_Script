@@ -4,7 +4,6 @@
 # ======================================================
 
 # Step 1: Prepare the data for National Examples (g_conled == 1)
-
 aggregated_national <- group_roster %>%
   filter(g_conled == 1) %>%  
   mutate(across(starts_with("PRO08."), as.integer)) %>%  
@@ -40,7 +39,6 @@ aggregated_national <- group_roster %>%
   mutate(`Example Category` = "Graph Data National Examples")  
 
 # Step 2: Prepare the data for Institutional Examples (g_conled == 2 or g_conled == 3)
-
 aggregated_institutional <- group_roster %>%
   filter(g_conled %in% c(2, 3)) %>%  
   mutate(across(starts_with("PRO08."), as.integer)) %>%  
@@ -76,7 +74,6 @@ aggregated_institutional <- group_roster %>%
   mutate(`Example Category` = "Overall Institution Examples")  
 
 # Step 3: Combine both datasets
-
 aggregated_data <- bind_rows(aggregated_national, aggregated_institutional) %>%
   mutate(
     `Use of Recommendations` = factor(
@@ -97,7 +94,7 @@ dashed_border <- fp_border(color = "#3b71b3", width = 2, style = "dashed")  # Fo
 default_border <- fp_border(color = "black", width = 0.5)  # Default border for "Overall Institution Examples"
 
 # Step 4: Beautify and create FlexTable for Word
-figure8_flextable <- flextable(aggregated_data) %>%
+ar.2.2 <- flextable(aggregated_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%  # Light blue header
@@ -106,7 +103,7 @@ figure8_flextable <- flextable(aggregated_data) %>%
   bg(bg = "#f4cccc", j = ~ `2024`) %>%   
   bg(bg = "#c9daf8", j = ~ Total) %>%   
   border_outer(border = fp_border(color = "black", width = 2)) %>%  # Outer border
-  border_inner(border = fp_border(color = "gray", width = 0.5)) %>%  # Inner borders
+  border_inner_h(border = fp_border(color = "gray", width = 0.5)) %>%  # Inner borders
   fontsize(size = 8) %>%
   
   # **AutoFit for Better Readability**
@@ -149,7 +146,8 @@ figure8_flextable <- flextable(aggregated_data) %>%
     colwidths = ncol(aggregated_data)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure 7: Overview Data Sources and Tools for Country-led Examples 2024")
+  set_caption("Figure 7: Overview Data Sources and Tools for Country-led Examples 2024") %>%
+  fix_border_issues()
 
 # Display Updated Table
-print(figure8_flextable) #used to be figure 7 so maybe confusing
+print(ar.2.2)
