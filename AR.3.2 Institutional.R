@@ -56,8 +56,11 @@ institutional_level_flextable <- flextable(institutional_implementation_table_le
   merge_v(j = ~ `Use of Recommendations`) %>%  # Merge vertical cells for Use_of_Recommendations
   merge_v(j = ~ `Implementation Level`) %>%  # Merge vertical cells for Source
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  border_inner(border = fp_border(color = "gray", width = 0.5)) %>%
+  border_inner_v(border = fp_border(color = "gray", width = 0.5), part = "body") %>%
+  border_inner_h(border = fp_border(color = "gray", width = 0.5), part = "all") %>%
+  bg(part = "header", bg = "#4cc3c9") %>%
   autofit() %>%
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
   set_caption(caption = "Institutional Implementation Breakdown by Implementation Level")
+
 institutional_level_flextable                        
