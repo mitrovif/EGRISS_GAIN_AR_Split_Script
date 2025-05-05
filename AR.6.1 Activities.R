@@ -72,10 +72,40 @@ combined_data <- bind_rows(
     Interest = "List of Interested Organizations",
     Organization_Type = "",
     `Year 2023` = "",
-    `Year 2024` = ""
+    `Year 2024` = "",
+    stringsAsFactors = FALSE
   ),
   interested_organizations
+) %>%
+  mutate(Interest = ifelse(Interest == "", NA, Interest)) %>%  # Convert "" to NA
+  fill(Interest, .direction = "down") %>%
+  rename('Organization Type' = Organization_Type) 
+
+# Identify the row index where 'List of Interested Organizations' appears
+insert_index <- which(combined_data$Interest == "List of Interested Organizations")
+
+# Create a blank row with same structure
+blank_row <- combined_data[1, ]
+blank_row[,] <- NA  # Set all values to NA
+
+# Insert the blank row before that index
+combined_data <- bind_rows(
+  combined_data[1:(insert_index - 1), ],
+  blank_row,
+  combined_data[insert_index:nrow(combined_data), ]
 )
+
+# Create a new row with 'Interest in EGRISS Membership' in the first column, rest NA
+new_row <- combined_data[1, ]
+new_row[,] <- NA
+new_row$Interest <- "Interest in EGRISS Membership"
+
+# Insert it as the first row
+combined_data <- bind_rows(
+  new_row,
+  combined_data
+) %>%
+  select(c("Interest", "Organization Type", "Year 2023", "Year 2024"))
 
 # Create FlexTable for Combined Table - AR.6.1
 AR.6.1 <- flextable(combined_data) %>%
@@ -85,13 +115,26 @@ AR.6.1 <- flextable(combined_data) %>%
   color(color = "white", part = "header") %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 8, part = "body") %>%
-  border_outer(border = border_style) %>%
-  border_inner(border = border_style) %>%
-  delete_columns("Year.2023") %>%    # DELETE unwanted 'Year.2023'
-  delete_columns("Year.2024") %>%    # DELETE unwanted 'Year.2024'
+  bg(part = "header", bg = "#4cc3c9") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
+  border_inner(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   set_table_properties(layout = "autofit") %>%
+  merge_v(j = ~ Interest) %>%
+  
+  # Merge across visible columns only
+  merge_at(i = 1, j = visible_cols, part = "body") %>%
+  merge_at(i = 12, j = visible_cols, part = "body") %>%
+  
+  # Style the merged rows
+  bg(i = c(1, 12), bg = "#d9d9d9", part = "body") %>%
+  align(i = c(1, 12), align = "left", part = "body") %>%
+  
+  # Remove vertical borders for empty row (e.g., row 11)
+  vline(i = 11, j = 1:ncol(combined_data), border = fp_border(width = 0), part = "body") %>%
+  
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
-  set_caption(caption = "Interest in EGRISS Membership by Country and Year")
+  set_caption(caption = "Interest in EGRISS Membership by Country and Year") %>%
+  fix_border_issues()
 
 AR.6.1
 
