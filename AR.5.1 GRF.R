@@ -75,9 +75,24 @@ merged_summary <- bind_rows(
   entity_summary
 )
 
+# Find the row index where "South America" appears
+south_america_index <- which(merged_summary$`GFR Data on Pledges` == "South America")
+
+# Create a blank row (same structure as the existing data)
+blank_row <- merged_summary[1, ]
+blank_row[,] <- NA  # Set all values to NA or "" as needed
+
+# Insert the blank row after "South America"
+merged_summary <- bind_rows(
+  merged_summary[1:south_america_index, ],
+  blank_row,
+  merged_summary[(south_america_index + 1):nrow(merged_summary), ]
+) %>%
+  rename('Total Pledges' = Total_Pledges)
+
 # Styling Variables
 egriss_color <- "#003366"  # EGRISS dark blue
-section_header_color <- "#f3f3f3"
+section_header_color <- "#D9D9D9"
 
 # Create FlexTable with Styling
 grf_flextable <- flextable(merged_summary) %>%
@@ -85,13 +100,16 @@ grf_flextable <- flextable(merged_summary) %>%
   fontsize(size = 10, part = "all") %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%  # Outer Border for Entire Table
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
+  border(i = 1, border.bottom = fp_border(color = "black", width = 2), part = "body") %>%
   autofit() %>%
   set_table_properties(layout = "autofit", width = 0.6) %>%  # New Table Sizing Control
   bold(i = 1, part = "body") %>%  # Bold Total Row
   bg(i = 1, bg = egriss_color, part = "body") %>%  # Total Row in EGRISS Color
   color(i = 1, color = "white", part = "body") %>%  # Text color for Total row
   bg(i = 2, bg = section_header_color, part = "body") %>%  # Region Section Header
-  bg(i = nrow(region_summary) + 3, bg = section_header_color, part = "body") %>%  # Entity Section Header
+  bg(i = nrow(region_summary) + 4, bg = section_header_color, part = "body") %>%  # Entity Section Header
   add_footer_row(
     values = paste0(
       "Note: Data is based on GAIN Survey 2024 analysis of Statistical Inclusion Pledges. ",
