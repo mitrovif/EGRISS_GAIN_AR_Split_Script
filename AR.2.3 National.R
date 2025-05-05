@@ -74,17 +74,18 @@ secondary_color <- "#3b71b3"
 accent_color <- "#072d62"
 highlight_red <- "#D73027"  # Correct EGRISS red for highlighting
 background_color <- "#f0f8ff"
+
 # Step 4: Merge Nationally and Institutionally Led Data
 merged_table <- nationally_led_data %>%
   full_join(institutionally_led_data, by = "Category", suffix = c("_National", "_Institutional"))
+
+highlight_row <- which(merged_table$Category == "Statistical framework/population group")
 
 # Create FlexTable with Enhanced Formatting
 merged_flextable <- flextable(merged_table) %>%
   add_header_row(values = c("", "Nationally Led Examples", "Institutionally Led Examples"), 
                  colwidths = c(1, 3, 3)) %>%
   set_header_labels(
-    Category = "Elements of International Recommendations Used",  # Updated name
-    
     Category = "Elements of International Recommendations Used",
     IRRS_National = "IRRS",
     IRIS_National = "IRIS",
@@ -93,23 +94,26 @@ merged_flextable <- flextable(merged_table) %>%
     IRIS_Institutional = "IRIS",
     IROSS_Institutional = "IROSS"
   ) %>%
-  
-  # Default Outer Border for Entire Table
-  border_outer(border = fp_border(color = "black", width = 2)) %>%
-  
-  # Light Blue Header (First Two Rows)
   bg(i = 1:2, part = "header", bg = primary_color) %>%
   color(i = 1:2, part = "header", color = "black") %>%
   bold(i = 1:2, part = "header") %>%
+  border(i = 1, part = "header", border.bottom = fp_border(color = "black", width = 2)) %>%
   
-  # Red Outer Border for "Statistical framework/population group" (NO INNER VERTICAL BORDERS)
+  # Default Outer Border for Entire Table
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
+  fix_border_issues() %>%
+  
+  # Inner Borders for Entire Table
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   
   # Red Outer Border for "Statistical framework/population group"
-  border(i = which(merged_table$Category == "Statistical framework/population group"),
+  border(i = highlight_row, j = 1,
+         border.left = fp_border(color = highlight_red, width = 2)) %>%
+  border(i = highlight_row, j = ncol(merged_table),
+         border.right = fp_border(color = highlight_red, width = 2)) %>%
+  border(i = highlight_row,
          border.top = fp_border(color = highlight_red, width = 2),
-         border.bottom = fp_border(color = highlight_red, width = 2),
-         border.left = fp_border(color = "transparent", width = 0),
-         border.right = fp_border(color = "transparent", width = 0)) %>%
+         border.bottom = fp_border(color = highlight_red, width = 2)) %>%
   
   # AutoFit for Optimal Sizing
   set_table_properties(width = 0.5, layout = "autofit") %>%
