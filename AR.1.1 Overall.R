@@ -1,4 +1,3 @@
-
 # ======================================================
 # Summary of Country-Led Examples (Figure 4 in New Version of AR)
 # ======================================================
@@ -75,7 +74,6 @@ graph_data_table$`Example Lead/Placement` <- ifelse(duplicated(graph_data_table$
 graph_data_table <- graph_data_table %>%
   select(`Example Lead/Placement`, `Use of Recommendations`, everything())
 
-
 summary_table <- summary_table %>%
   select(`Example Lead/Placement`, `Use of Recommendations`, everything())
 
@@ -126,12 +124,10 @@ merged_df <- bind_rows(graph_data_table, summary_table)
 primary_color <- "#4cc3c9"  # Light blue
 secondary_color <- "#3b71b3"  # Dark blue
 
-
-# Summary of Country-Led Examples (Figure 6)
-
+# Summary of Country-Led Examples
 
 # Create Merged Flextable with Enhanced Formatting
-figure6 <- flextable(merged_df) %>%
+ar.1.1 <- flextable(merged_df) %>%
   set_header_labels(
     `Example Lead/Placement` = "Example Lead/Placement",
     `Use of Recommendations` = "Use of Recommendations"
@@ -145,6 +141,8 @@ figure6 <- flextable(merged_df) %>%
   delete_columns(j = c("g_conled", "PRO09")) %>%  # Remove g_conled & PRO09
   color(i = 1:2, color = secondary_color, part = "body") %>%  
   color(i = 3:4, color = primary_color, part = "body") %>%  
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%
   add_footer_row(
     values = paste0(
       "Footnote: This data supports Figure 4 in the 2024 Annual Report. ",
@@ -161,6 +159,6 @@ figure6 <- flextable(merged_df) %>%
   set_caption("Figure 4: Trend of Country and Institutional-led Implementation Examples (2021-2024)")
 
 # Display Merged Table
-figure6 # this is a bit confusing and in some revision should be named figure 4 
+ar.1.1 
 
 
