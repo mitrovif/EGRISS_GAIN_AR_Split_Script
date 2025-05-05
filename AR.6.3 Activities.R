@@ -68,8 +68,12 @@ combined_data <- bind_rows(used_publications, impact_data)
 ar.6.3 <- flextable(combined_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%
   bg(bg = header_color, part = "header") %>%
   color(color = "white", part = "header") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   autofit() %>%
   set_caption("AR.6.3: Overview of Respondents Using Publications and Impact of Publications")
 
