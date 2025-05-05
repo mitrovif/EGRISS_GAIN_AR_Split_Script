@@ -83,9 +83,14 @@ combined_data <- bind_rows(seen_egriss, challenges_data)
 # Step 5: Create FlexTable
 ar.6.2 <- flextable(combined_data) %>%
   theme_booktabs() %>%
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 8, part = "body") %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
   color(color = "white", part = "header") %>%
+  bg(part = "header", bg = "#4cc3c9") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   autofit() %>%
   set_caption("AR.6.2: Overview of Respondents Facing Challenges and Types of Challenges Identified")
 
