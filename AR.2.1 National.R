@@ -1,9 +1,9 @@
+
 # ============================================================================================================
 # Figure 6: Implementation of the Recommendations by Region (in new version of AR)
 # ============================================================================================================
 
 # Step 1: Extract Country-led Examples Using Recommendations
-
 regional_data_using_recs <- group_roster %>%
   filter(PRO09 == 1, g_conled == 1) %>%
   group_by(region, ryear) %>%
@@ -12,7 +12,6 @@ regional_data_using_recs <- group_roster %>%
   mutate(`Example Category` = "Graph Data: Country-led Example Using Recommendations")
 
 # Step 2: Extract Overall Country-led Examples (Including those without use of recommendations)
-
 regional_data_overall <- group_roster %>%
   filter(g_conled == 1) %>%
   group_by(region, ryear) %>%
@@ -21,7 +20,6 @@ regional_data_overall <- group_roster %>%
   mutate(`Example Category` = "Overall Country-led Example")
 
 # Step 3: Combine both datasets
-
 regional_data_combined <- bind_rows(regional_data_using_recs, regional_data_overall) %>%
   rename(Region = region) %>%
   select(`Example Category`, Region, everything())  # Ensure correct column order
@@ -32,11 +30,11 @@ default_border <- fp_border(color = "black", width = 1)  # Default black border 
 header_color <- "#4cc3c9"  # Primary color for header row
 header_border <- fp_border(color = "black", width = 1)  # Black border for header
 
-# Step 4: Create FlexTable and retain the name as "text1"
-
-text1 <- flextable(regional_data_combined) %>%
-  theme_booktabs() %>%
+# Step 4: Create FlexTable
+ar.2.1 <- flextable(regional_data_combined) %>%
+  theme_vanilla() %>%
   bold(part = "header") %>%
+  fontsize(size = 10, part = "header") %>%
   fontsize(size = 10, part = "body") %>%  # Set font size 10 for body text
   merge_v(j = ~ `Example Category`) %>%  # Merge vertical cells for "Example Category"
   autofit() %>%
@@ -49,16 +47,16 @@ text1 <- flextable(regional_data_combined) %>%
   # Apply blue border styling for "Graph Data: Country-led Example Using Recommendations"
   border(i = which(regional_data_combined$`Example Category` == "Graph Data: Country-led Example Using Recommendations"), 
          border.top = highlight_border, 
-         border.bottom = highlight_border, 
-         border.left = highlight_border, 
-         border.right = highlight_border) %>%
+         border.bottom = highlight_border) %>% 
+         # border.left = highlight_border, 
+         # border.right = highlight_border) %>%
   
   # Apply black border styling for "Overall Country-led Example"
   border(i = which(regional_data_combined$`Example Category` == "Overall Country-led Example"), 
          border.top = fp_border(color = "gray", width = 0.5), 
-         border.bottom = fp_border(color = "gray", width = 0.5), 
-         border.left = fp_border(color = "gray", width = 0.5), 
-         border.right = fp_border(color = "gray", width = 0.5)) %>%
+         border.bottom = fp_border(color = "gray", width = 0.5)) %>% 
+         # border.left = fp_border(color = "gray", width = 0.5), 
+         # border.right = fp_border(color = "gray", width = 0.5)) %>%
   
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   
@@ -72,8 +70,8 @@ text1 <- flextable(regional_data_combined) %>%
     colwidths = ncol(regional_data_combined)  # Ensure footer spans full table width
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure 6: Implementation of the Recommendations by Region")
+  set_caption("Figure 6: Implementation of the Recommendations by Region") %>%
+  fix_border_issues()
 
 # Display the table
-
-text1 # this is now Figure 6 in AR 
+ar.2.1
