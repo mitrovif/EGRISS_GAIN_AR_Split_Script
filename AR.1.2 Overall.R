@@ -71,7 +71,7 @@ recuse_table <- bind_rows(aggregated_rows, recuse_table)
 recuse_table$`Example Lead` <- ifelse(duplicated(recuse_table$`Example Lead`) & recuse_table$`Example Lead` == "Graph Data", "", recuse_table$`Example Lead`)
 
 # Create flextable with consistent styling and colors
-figure7 <- flextable(recuse_table) %>%
+ar.1.2 <- flextable(recuse_table) %>%
   theme_vanilla() %>%
   fontsize(size = 10, part = "all") %>%
   bold(part = "header") %>%
@@ -83,6 +83,8 @@ figure7 <- flextable(recuse_table) %>%
   bg(i = 3, bg = iross_color, part = "body") %>%  # IROSS
   bg(i = 4, bg = mixed_color, part = "body") %>%  # Mixed
   bg(i = 5, bg = undetermined_color, part = "body") %>%  # Undetermined
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%
   color(i = 1:5, color = "white", part = "body") %>%  # White text for first five rows
   add_footer_row(
     values = paste0(
@@ -101,4 +103,4 @@ figure7 <- flextable(recuse_table) %>%
 
 # Display Merged Table
 
-figure7 # this is now Fiure 5 in AR new version 
+ar.1.2
