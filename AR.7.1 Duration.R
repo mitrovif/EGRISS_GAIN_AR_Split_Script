@@ -1,3 +1,4 @@
+
 # ======================================================
 # Script: Calculate `example_duration` from PRO04_year and PRO05_year
 # Description:
@@ -163,9 +164,9 @@ aggregated_data <- bind_rows(aggregated_national, aggregated_institutional) %>%
 # Step 4: Create FlexTable
 solid_border <- fp_border(color = "#3b71b3", width = 2, style = "solid")
 dashed_border <- fp_border(color = "#3b71b3", width = 2, style = "dashed")
-default_border <- fp_border(color = "black", width = 0.5)
+default_border <- fp_border(color = "gray", width = 0.5)
 
-figure_flextable <- flextable(aggregated_data) %>%
+ar.7.1 <- flextable(aggregated_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
@@ -173,7 +174,7 @@ figure_flextable <- flextable(aggregated_data) %>%
   merge_v(j = ~ `Use of Recommendations`) %>%
   bg(bg = "#f4cccc", j = ~ Total) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  border_inner(border = fp_border(color = "gray", width = 0.5)) %>%
+  border_inner_h(border = fp_border(color = "gray", width = 0.5)) %>%
   fontsize(size = 8) %>%
   autofit() %>%
   # Graph Data National Examples
@@ -189,19 +190,22 @@ figure_flextable <- flextable(aggregated_data) %>%
   border(i = which(aggregated_data$`Example Category` == "Overall Institution Examples"),
          border.top = default_border,
          border.bottom = default_border) %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
   add_footer_row(
     values = paste0(
-      "Graph Data National Examples are categorized by time until project conclusion. ",
+      "Footnote: Graph Data National Examples are categorized by time until project conclusion. ",
       "Sources represent data types used in examples: ",
       "• Survey, Census, Administrative Data, Data Integration, and Other (PRO08.*). ",
       "This is a multiple-response question, meaning one example can feature multiple sources or tools."
     ),
     colwidths = ncol(aggregated_data)
   ) %>%
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure: Sources Used by Project Duration Category")
+  set_caption("Figure: Sources Used by Project Duration Category") %>%
+  fix_border_issues()
 
 # View the result
-print(figure_flextable)
-
+print(ar.7.1)
 
