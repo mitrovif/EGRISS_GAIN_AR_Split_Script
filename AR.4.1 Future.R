@@ -1,3 +1,4 @@
+
 # =============================================================================================================
 # Add Future Projects 
 # =============================================================================================================
@@ -35,15 +36,17 @@ source_summary <- group_roster2 %>%
   bind_rows(tibble(Source = "Total", Count = sum(.$Count)))
 
 # Create a FlexTable for Word
-source_summary_flextable <- flextable(source_summary) %>%
+ar.4.1 <- flextable(source_summary) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(bg = "#c9daf8", j = ~ Count) %>%  # Highlight the Count column
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(border = fp_border(color = "gray", width = 0.5), part = "all") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
+  fontsize(size = 10, part = "all") %>%  # Set font size
   autofit() %>%
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
+  fontsize(size = 7, part = "footer") %>%
   set_caption(caption = "Future Projects Breakdown by Source for 2024")
 
-source_summary_flextable                        
+ar.4.1                          
