@@ -12,9 +12,7 @@ header_color <- "#4cc3c9"      # Light Blue Header
 gray_highlight <- "#D9D9D9"   # Gray for Key Rows
 border_style <- fp_border(color = "black", width = 1)
 
-
 # PRO19 Responses - Transposed and with Labels
-
 
 response_labels <- c(
   "Challenges faced" = "Challenges faced",
@@ -42,10 +40,7 @@ pro19_summary <- group_roster %>%
 pro19_summary <- pro19_summary %>%
   mutate(across(c(`2023`, `2024`), as.character))  # Convert to character for compatibility
 
-
 # Challenges Reported (Figure 9) - Transposed and with Labels
-
-
 challenge_labels <- c(
   "PRO20.A" = "Non-response bias",
   "PRO20.B" = "Sampling errors",
@@ -74,10 +69,7 @@ challenges_data <- challenges_data %>%
   rename(Response = Challenge) %>%
   mutate(across(c(`2023`, `2024`), as.character))  # Convert to character for compatibility
 
-
 # Combining Both Tables into One Stacked Table
-
-
 combined_data <- bind_rows(
   tibble(Response = "Count of Respondents Facing Challenges", `2023` = "", `2024` = ""),
   pro19_summary,
@@ -92,9 +84,10 @@ highlight_rows <- which(combined_data$Response %in%
                             "Types of Challenges Identified"))
 
 # Create the flextable
-figure9 <- flextable(combined_data) %>%
+ar.2.4 <- flextable(combined_data) %>%
   theme_vanilla() %>%
-  fontsize(size = 10, part = "all") %>%
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%   
   bold(part = "header") %>%
   bg(part = "header", bg = header_color) %>%  # Light Blue Header
   bg(i = highlight_rows, bg = gray_highlight, part = "body") %>%  # Highlight Correct Rows
@@ -103,7 +96,7 @@ figure9 <- flextable(combined_data) %>%
   autofit() %>%
   add_footer_row(
     values = paste0(
-      "Data based on respondents’ reports in 2023 and 2024. ",
+      "Footnote: Data based on respondents’ reports in 2023 and 2024. ",
       "Categories include those who identified as facing challenges, not facing challenges, or did not provide sufficient information. ",
       "The second section categorizes types of challenges identified. ",
       "Key rows are highlighted in gray for improved readability."
@@ -113,4 +106,4 @@ figure9 <- flextable(combined_data) %>%
   fontsize(size = 7, part = "footer") %>%
   set_caption("Figure 9: Overview of Respondents Facing Challenges and Types of Challenges Identified")
 
-print(figure9)
+print(ar.2.4)
