@@ -147,10 +147,8 @@ population_summary <- group_roster2 %>%
   count(Population_Type, Source_Variable) %>%
   pivot_wider(names_from = Source_Variable, values_from = n, values_fill = 0)
 
-
 # Output the new population-specific table
 list(population_summary_flextable)
-
 
 # Create FlexTables for Word
 quarter_summary_flextable <- flextable(quarter_summary) %>%
@@ -195,8 +193,8 @@ region_summary_flextable <- flextable(region_summary) %>%
   bold(part = "header") %>%
   autofit() %>%
   set_caption(caption = "Future Projects Breakdown by Region")
-# Add LOC01 Breakdown
 
+# Add LOC01 Breakdown
 group_roster2 <- group_roster2 %>%
   mutate(LOC01 = as.numeric(LOC01)) %>%
   mutate(
@@ -206,6 +204,7 @@ group_roster2 <- group_roster2 %>%
       TRUE ~ "Other"
     )
   )
+
 # Table 4: Separate LOC01 Breakdown
 loc01_summary <- group_roster2 %>%
   pivot_longer(
@@ -256,6 +255,7 @@ merged_data <- bind_rows(quarter_summary, population_summary, region_summary, lo
 
 # Clean up Category to show only once per section
 merged_data$Category <- ifelse(duplicated(merged_data$Category), "", merged_data$Category)
+
 # ==========================================================
 # Create FlexTable for Merged Table with Column Totals Only
 # ==========================================================
@@ -284,14 +284,13 @@ list(quarter_summary_flextable, population_summary_flextable, region_summary_fle
 # Rename the merged flextable and apply beautification
 header_color <- "#4cc3c9"
 
-AR.4.2_Future <- flextable(merged_data) %>%
+ar.4.2 <- flextable(merged_data) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
   color(color = "black", part = "header") %>%
   fontsize(size = 10, part = "header") %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  border_inner_v(border = fp_border(color = "gray", width = 0.5), part = "body") %>%  # Only vertical borders in body
   border_inner_h(border = fp_border(color = "gray", width = 0.5), part = "all") %>%  # Keep horizontal borders
   merge_v(j = 1) %>%  # Merge vertical cells in first column
   fontsize(size = 9, part = "body") %>%
@@ -299,4 +298,4 @@ AR.4.2_Future <- flextable(merged_data) %>%
   set_caption("AR.4.2 Future Projects Overview Including Type of Example with Column Totals") %>%
   fix_border_issues()
 
-AR.4.2_Future
+ar.4.2
