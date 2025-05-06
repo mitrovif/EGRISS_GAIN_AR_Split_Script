@@ -1,3 +1,4 @@
+
 # =============================================================================================================
 # Add Memberships - Summary by Year and Organization Type (Merged Groups)
 # =============================================================================================================
@@ -15,18 +16,20 @@ main_roster <- read.csv(main_roster_file)
 future_interest_summary <- main_roster %>%
   select(c("ACT02", "mcountry", "morganization", "year", "LOC01")) %>%
   mutate(
+    ACT02_chr = as.character(ACT02),  # force consistent type
     Interest = case_when(
-      ACT02 %in% c(1, "YES") ~ "Interested in Learning about Membership",
-      ACT02 %in% c(2, "NO", 8, "DON'T KNOW") ~ "Not Interested in Learning about Membership or Don't Know",
-      ACT02 == 9 | ACT02 == "Unknown" ~ NA_character_,  
-      .default = ACT02
+      ACT02_chr %in% c("1", "YES") ~ "Interested in Learning about Membership",
+      ACT02_chr %in% c("2", "NO", "8", "DON'T KNOW") ~ "Not Interested in Learning about Membership or Don't Know",
+      ACT02_chr %in% c("9", "Unknown") ~ NA_character_,
+      TRUE ~ ACT02_chr  # default fallback, now consistent
     ),
     Organization_Type = case_when(
       LOC01 == 1 ~ "NSO",
       LOC01 %in% c(2, 3) ~ "International and Other Organizations",
-      .default = "Other"
+      TRUE ~ "Other"
     )
   ) %>%
+  select(-ACT02_chr) %>%
   filter(!is.na(Interest), year %in% c(2023, 2024)) %>%
   group_by(Interest, Organization_Type, year, .drop = FALSE) %>%
   summarize(`Number of Institutions` = n(), .groups = "drop") %>%
@@ -108,33 +111,27 @@ combined_data <- bind_rows(
   select(c("Interest", "Organization Type", "Year 2023", "Year 2024"))
 
 # Create FlexTable for Combined Table - AR.6.1
-AR.6.1 <- flextable(combined_data) %>%
+ar.6.1 <- flextable(combined_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
   color(color = "white", part = "header") %>%
   fontsize(size = 10, part = "header") %>%
-  fontsize(size = 8, part = "body") %>%
+  fontsize(size = 10, part = "body") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  border_inner(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   set_table_properties(layout = "autofit") %>%
   merge_v(j = ~ Interest) %>%
-  
-  # Merge across visible columns only
-  merge_at(i = 1, j = visible_cols, part = "body") %>%
-  merge_at(i = 12, j = visible_cols, part = "body") %>%
-  
-  # Style the merged rows
-  bg(i = c(1, 12), bg = "#d9d9d9", part = "body") %>%
+  #merge_at(i = 1, j = 1:ncol(combined_data_display), part = "body") %>%
+  #merge_at(i = 12, j = 1:ncol(combined_data_display), part = "body") %>%
+  bg(i = c(1, 9), bg = "#d9d9d9", part = "body") %>%
   align(i = c(1, 12), align = "left", part = "body") %>%
-  
-  # Remove vertical borders for empty row (e.g., row 11)
-  vline(i = 11, j = 1:ncol(combined_data), border = fp_border(width = 0), part = "body") %>%
-  
+  vline(i = 11, j = 1:ncol(combined_data_display), border = fp_border(width = 0), part = "body") %>%
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
+  fontsize(size = 7, part = "footer") %>%
   set_caption(caption = "Interest in EGRISS Membership by Country and Year") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
   fix_border_issues()
 
-AR.6.1
-
+ar.6.1
