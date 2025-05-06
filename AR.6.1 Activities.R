@@ -1,3 +1,4 @@
+
 # =============================================================================================================
 # Add Memberships - Summary by Year and Organization Type (Merged Groups)
 # =============================================================================================================
@@ -108,7 +109,7 @@ combined_data <- bind_rows(
   select(c("Interest", "Organization Type", "Year 2023", "Year 2024"))
 
 # Create FlexTable for Combined Table - AR.6.1
-AR.6.1 <- flextable(combined_data) %>%
+ar.6.1 <- flextable(combined_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
@@ -117,24 +118,18 @@ AR.6.1 <- flextable(combined_data) %>%
   fontsize(size = 8, part = "body") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  border_inner(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   set_table_properties(layout = "autofit") %>%
   merge_v(j = ~ Interest) %>%
-  
-  # Merge across visible columns only
-  merge_at(i = 1, j = visible_cols, part = "body") %>%
-  merge_at(i = 12, j = visible_cols, part = "body") %>%
-  
-  # Style the merged rows
-  bg(i = c(1, 12), bg = "#d9d9d9", part = "body") %>%
+  #merge_at(i = 1, j = 1:ncol(combined_data_display), part = "body") %>%
+  #merge_at(i = 12, j = 1:ncol(combined_data_display), part = "body") %>%
+  bg(i = c(1, 9), bg = "#d9d9d9", part = "body") %>%
   align(i = c(1, 12), align = "left", part = "body") %>%
-  
-  # Remove vertical borders for empty row (e.g., row 11)
-  vline(i = 11, j = 1:ncol(combined_data), border = fp_border(width = 0), part = "body") %>%
-  
+  vline(i = 11, j = 1:ncol(combined_data_display), border = fp_border(width = 0), part = "body") %>%
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
+  fontsize(size = 7, part = "footer") %>%
   set_caption(caption = "Interest in EGRISS Membership by Country and Year") %>%
   fix_border_issues()
 
-AR.6.1
+ar.6.1
 
