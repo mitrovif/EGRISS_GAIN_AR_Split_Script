@@ -1,3 +1,4 @@
+
 # ============================================================================================================
 # Partnerships and Organization Mentions in R with FlexTable
 # ============================================================================================================
@@ -51,12 +52,11 @@ mention_counts <- mention_counts %>%
 print(mention_counts)
 
 # Step 3: Create FlexTables
-
 # Styling Variables
 section_header_color <- "#f3f3f3"  # Light grey for section headers
 
 # Create FlexTable with Styling for specific orgs mentioned
-organization_mentions_flextable <- flextable(mention_counts) %>%
+ar.2.6 <- flextable(mention_counts) %>%
   theme_vanilla() %>%  # Base theme
   fontsize(size = 10, part = "all") %>%  # Set font size
   border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
@@ -68,13 +68,13 @@ organization_mentions_flextable <- flextable(mention_counts) %>%
 
 # Apply conditional styling (only if table has rows)
 if (nrow(mention_counts) > 0) {
-  organization_mentions_flextable <- organization_mentions_flextable %>%
+  ar.2.6 <- ar.2.6 %>%
     color(i = 1, color = "black", part = "body")  # Keep the text black (default)
 }
 
 # Add Caption
-organization_mentions_flextable <- organization_mentions_flextable %>%
+ar.2.6 <- ar.2.6 %>%
   set_caption("Organization Mentions by Year")  # Table Caption
 
 # Display the Table
-print(organization_mentions_flextable)
+print(ar.2.6)
