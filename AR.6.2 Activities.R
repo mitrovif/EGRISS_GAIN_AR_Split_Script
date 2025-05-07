@@ -86,7 +86,7 @@ ar.6.2 <- flextable(combined_data) %>%
   fontsize(size = 10, part = "body") %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
-  color(color = "white", part = "header") %>%
+  color(color = "black", part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
