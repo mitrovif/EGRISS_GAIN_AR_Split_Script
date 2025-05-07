@@ -1,7 +1,7 @@
+
 # ============================================================================================================
 # AR.6.2: Overview of Respondents Facing Challenges and Types of Challenges Identified
 # ============================================================================================================
-
 
 # Load required libraries
 library(flextable)
@@ -13,7 +13,6 @@ header_color <- "#4cc3c9"
 gray_highlight <- "#D9D9D9"
 border_style <- fp_border(color = "black", width = 1)
 
-# Load dataset
 # Load dataset
 main_roster_file <- file.path("analysis_ready_main_roster.csv")
 main_roster <- read.csv(main_roster_file)
@@ -27,15 +26,15 @@ seen_egriss <- main_roster %>%
   filter(year %in% c(2023, 2024)) %>%
   select(year, ACT03) %>%
   mutate(Response = case_when(
-    ACT03 %in% c("2", "NO") ~ "Pubilcations Seen/Received",
-    ACT03 %in% c("1", "YES") ~ "No Pubilcations Seen/Received",
+    ACT03 %in% c("2", "NO") ~ "Publications Seen/Received",
+    ACT03 %in% c("1", "YES") ~ "No Publications Seen/Received",
     ACT03 %in% c("9", "NO RESPONSE", "8", "DON'T KNOW") ~ "No Response or Don't Know",
     is.na(ACT03) ~ "No Response or Don't Know",
     TRUE ~ as.character(ACT03)
   )) %>%
   group_by(Response, year) %>%
   summarize(Count = n(), .groups = 'drop') %>%
-  complete(Response = c("Pubilcations Seen/Received", "No Pubilcations Seen/Received", "No Response or Don't Know"),
+  complete(Response = c("Publications Seen/Received", "No Publications Seen/Received", "No Response or Don't Know"),
            year = c(2023, 2024), fill = list(Count = 0)) %>%
   pivot_wider(names_from = year, values_from = Count)
 
@@ -84,7 +83,7 @@ combined_data <- bind_rows(seen_egriss, challenges_data)
 ar.6.2 <- flextable(combined_data) %>%
   theme_booktabs() %>%
   fontsize(size = 10, part = "header") %>%
-  fontsize(size = 8, part = "body") %>%
+  fontsize(size = 10, part = "body") %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
   color(color = "white", part = "header") %>%
