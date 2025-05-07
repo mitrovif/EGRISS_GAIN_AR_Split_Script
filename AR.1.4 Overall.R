@@ -77,8 +77,8 @@ total_unique_summary <- total_unique_summary %>%
 final_unique_country_table <- bind_rows(combined_unique_country_count, total_unique_summary)
 
 # Beautify and create FlexTable for Word
-unique_country_flextable <- flextable(final_unique_country_table) %>%
-  theme_booktabs() %>%
+ar.1.4 <- flextable(final_unique_country_table) %>%
+  theme_vanilla() %>%
   bold(part = "header") %>%
   
   # Highlight Total Row in Dark Blue
@@ -95,10 +95,14 @@ unique_country_flextable <- flextable(final_unique_country_table) %>%
   
   merge_v(j = ~ `Leadership`) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  # border_inner(border = fp_border(color = "gray", width = 0.5)) %>%
+  border_inner_h(border = fp_border(color = "gray", width = 0.5)) %>%
   
   # AutoFit for Optimal Sizing
   set_table_properties(width = 0.5, layout = "autofit") %>%
+  
+  # Set font size
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%
   
   # Add Metadata Summary in Footnote
   add_footer_row(
@@ -119,4 +123,4 @@ unique_country_flextable <- flextable(final_unique_country_table) %>%
   set_caption("Unique Country Count by Examples led by distinct countries and Year for Use of Recommendations (PRO09 == 1)")
 
 # Display Table
-unique_country_flextable
+ar.1.4
