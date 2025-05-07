@@ -1,3 +1,4 @@
+
 # ============================================================================================================
 # Figure XX (text in AR): Components of EGRISS Recommendations Most Frequently Used
 # ============================================================================================================
@@ -12,9 +13,7 @@ repeat_data <- repeat_data %>%
   mutate(recommendation = as.character(recommendation)) %>%
   mutate(recommendation = na_if(trimws(recommendation), ""))
 
-
-
-# ✅ Convert all PRO12 columns to numeric before pivoting
+# Convert all PRO12 columns to numeric before pivoting
 pro12_columns <- grep("^PRO12[A-ZX]", names(repeat_data), value = TRUE)
 repeat_data <- repeat_data %>%
   mutate(across(all_of(pro12_columns), ~ as.numeric(.)))
@@ -59,14 +58,12 @@ summarize_table <- function(data, g_conled_value) {
 nationally_led_data <- summarize_table(processed_data, 1)
 institutionally_led_data <- summarize_table(processed_data, 2)
 
-
 # EGRISS Color Scheme
 primary_color <- "#4cc3c9"
 secondary_color <- "#3b71b3"
 accent_color <- "#072d62"
 highlight_red <- "#D73027"  # Correct EGRISS red for highlighting
 background_color <- "#f0f8ff"
-
 
 # EGRISS Color Scheme
 primary_color <- "#4cc3c9"
@@ -82,7 +79,7 @@ merged_table <- nationally_led_data %>%
 highlight_row <- which(merged_table$Category == "Statistical framework/population group")
 
 # Create FlexTable with Enhanced Formatting
-merged_flextable <- flextable(merged_table) %>%
+ar.2.3 <- flextable(merged_table) %>%
   add_header_row(values = c("", "Nationally Led Examples", "Institutionally Led Examples"), 
                  colwidths = c(1, 3, 3)) %>%
   set_header_labels(
@@ -115,6 +112,10 @@ merged_flextable <- flextable(merged_table) %>%
          border.top = fp_border(color = highlight_red, width = 2),
          border.bottom = fp_border(color = highlight_red, width = 2)) %>%
   
+  # Define text size
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>% 
+  
   # AutoFit for Optimal Sizing
   set_table_properties(width = 0.5, layout = "autofit") %>%
   
@@ -135,4 +136,4 @@ merged_flextable <- flextable(merged_table) %>%
   set_caption("Figure XX (text in AR): Components of EGRISS Recommendations Most Frequently Used")
 
 # Display the Final Table
-print(merged_flextable)
+print(ar.2.3)
