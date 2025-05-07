@@ -75,7 +75,6 @@ graph_data_table$`Example Lead/Placement` <- ifelse(duplicated(graph_data_table$
 graph_data_table <- graph_data_table %>%
   select(`Example Lead/Placement`, `Use of Recommendations`, everything())
 
-
 summary_table <- summary_table %>%
   select(`Example Lead/Placement`, `Use of Recommendations`, everything())
 
@@ -94,7 +93,7 @@ figure_graph_data <- flextable(graph_data_table) %>%
 
 # Create Flextable for Summary Table (Fully Hide g_conled & PRO09)
 
-figure6_no_header <- flextable(summary_table) %>%
+ar.1.1_no_header <- flextable(summary_table) %>%
   set_header_labels(`Example Lead/Placement` = "Example Lead/Placement", `Use of Recommendations` = "Use of Recommendations") %>%
   theme_vanilla() %>%
   fontsize(size = 10, part = "all") %>%
@@ -120,18 +119,17 @@ summary_table <- summary_table %>%
   select(all_of(all_columns))
 
 # Merge Graph Data Table and Summary Table
-merged_df <- bind_rows(graph_data_table, summary_table)
+merged_df <- bind_rows(graph_data_table, summary_table) %>%
+  mutate(`Example Lead/Placement` = na_if(trimws(`Example Lead/Placement`), "")) %>%  # convert "" or " " to NA
+  fill(`Example Lead/Placement`, .direction = "down")
 
 # Define Colors
 primary_color <- "#4cc3c9"  # Light blue
 secondary_color <- "#3b71b3"  # Dark blue
 
-
-# Summary of Country-Led Examples (Figure 6)
-
-
+# Summary of Country-Led Examples
 # Create Merged Flextable with Enhanced Formatting
-figure6 <- flextable(merged_df) %>%
+ar.1.1 <- flextable(merged_df) %>%
   set_header_labels(
     `Example Lead/Placement` = "Example Lead/Placement",
     `Use of Recommendations` = "Use of Recommendations"
@@ -142,9 +140,13 @@ figure6 <- flextable(merged_df) %>%
   bg(part = "header", bg = primary_color) %>%
   autofit() %>% 
   border_outer(border = fp_border(color = "black", width = 2)) %>%  # Added outer border
+  border_inner_h(part = "all", border = fp_border(color = "gray", width = 0.5)) %>%
   delete_columns(j = c("g_conled", "PRO09")) %>%  # Remove g_conled & PRO09
   color(i = 1:2, color = secondary_color, part = "body") %>%  
   color(i = 3:4, color = primary_color, part = "body") %>%  
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%
+  merge_v(j = ~ `Example Lead/Placement`) %>%
   add_footer_row(
     values = paste0(
       "Footnote: This data supports Figure 4 in the 2024 Annual Report. ",
@@ -161,6 +163,6 @@ figure6 <- flextable(merged_df) %>%
   set_caption("Figure 4: Trend of Country and Institutional-led Implementation Examples (2021-2024)")
 
 # Display Merged Table
-figure6 # this is a bit confusing and in some revision should be named figure 4 
+ar.1.1
 
 
