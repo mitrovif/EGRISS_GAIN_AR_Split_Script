@@ -1,3 +1,4 @@
+
 # =============================================================================================================
 # Generate Institutional Implementation breakdown table - by implementation level
 # =============================================================================================================
@@ -48,7 +49,7 @@ summary_rows <- institutional_implementation_table_level %>%
 institutional_implementation_table_level <- bind_rows(summary_rows, institutional_implementation_table_level)
 
 # Beautify and create FlexTable for Word
-institutional_level_flextable <- flextable(institutional_implementation_table_level) %>%
+ar.3.2 <- flextable(institutional_implementation_table_level) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(bg = "#f4cccc", j = ~ `2024`) %>%   # Highlight the 2024 column
@@ -56,11 +57,14 @@ institutional_level_flextable <- flextable(institutional_implementation_table_le
   merge_v(j = ~ `Use of Recommendations`) %>%  # Merge vertical cells for Use_of_Recommendations
   merge_v(j = ~ `Implementation Level`) %>%  # Merge vertical cells for Source
   border_outer(border = fp_border(color = "black", width = 2)) %>%
-  border_inner_v(border = fp_border(color = "gray", width = 0.5), part = "body") %>%
+  # border_inner_v(border = fp_border(color = "gray", width = 0.5), part = "body") %>%
   border_inner_h(border = fp_border(color = "gray", width = 0.5), part = "all") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
+  fontsize(size = 10, part = "all") %>%  # Set font size
   autofit() %>%
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
-  set_caption(caption = "Institutional Implementation Breakdown by Implementation Level")
+  fontsize(size = 7, part = "footer") %>%
+  set_caption(caption = "Institutional Implementation Breakdown by Implementation Level") %>%
+  fix_border_issues()
 
-institutional_level_flextable                        
+ar.3.2             
