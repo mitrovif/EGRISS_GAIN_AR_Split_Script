@@ -95,7 +95,7 @@ egriss_color <- "#003366"  # EGRISS dark blue
 section_header_color <- "#D9D9D9"
 
 # Create FlexTable with Styling
-grf_flextable <- flextable(merged_summary) %>%
+ar.5.1 <- flextable(merged_summary) %>%
   theme_vanilla() %>%
   fontsize(size = 10, part = "all") %>%
   bold(part = "header") %>%
@@ -112,7 +112,7 @@ grf_flextable <- flextable(merged_summary) %>%
   bg(i = nrow(region_summary) + 4, bg = section_header_color, part = "body") %>%  # Entity Section Header
   add_footer_row(
     values = paste0(
-      "Note: Data is based on GAIN Survey 2024 analysis of Statistical Inclusion Pledges. ",
+      "Footnote: Data is based on GAIN Survey 2024 analysis of Statistical Inclusion Pledges. ",
       "The merged table presents the breakdown by Region and Submitting Entity Type. ",
       "Regions labeled 'Region/Country not Reported' represent cases where no geographic location or entity was specified."
     ),
@@ -122,4 +122,4 @@ grf_flextable <- flextable(merged_summary) %>%
   set_caption("Summary Table: GFR Data on Pledges")
 
 # Display Table
-print(grf_flextable)
+print(ar.5.1)
