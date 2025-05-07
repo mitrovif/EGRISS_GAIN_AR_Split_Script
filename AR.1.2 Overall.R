@@ -55,7 +55,7 @@ recuse_table <- recuse_table %>%
          Total = rowSums(across(`2021`:`2024`), na.rm = TRUE))
 
 # Remove duplicated Example Lead labels
-recuse_table$`Example Lead` <- ifelse(duplicated(recuse_table$`Example Lead`), "", recuse_table$`Example Lead`)
+# recuse_table$`Example Lead` <- ifelse(duplicated(recuse_table$`Example Lead`), "", recuse_table$`Example Lead`)
 
 # Add aggregated rows for IRRS, IRIS, IROSS, Mixed, and Undetermined
 aggregated_rows <- recuse_table %>%
@@ -68,22 +68,28 @@ aggregated_rows <- recuse_table %>%
 recuse_table <- bind_rows(aggregated_rows, recuse_table)
 
 # Ensure "Graph Data" only appears once
-recuse_table$`Example Lead` <- ifelse(duplicated(recuse_table$`Example Lead`) & recuse_table$`Example Lead` == "Graph Data", "", recuse_table$`Example Lead`)
+# recuse_table$`Example Lead` <- ifelse(duplicated(recuse_table$`Example Lead`) & recuse_table$`Example Lead` == "Graph Data", "", recuse_table$`Example Lead`)
 
 # Create flextable with consistent styling and colors
-figure7 <- flextable(recuse_table) %>%
+ar.1.2 <- flextable(recuse_table) %>%
   theme_vanilla() %>%
   fontsize(size = 10, part = "all") %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   autofit() %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%  # Added outer border
+  border_inner_h(part = "all", border = fp_border(color = "gray", width = 0.5)) %>%
   bg(i = 1, bg = iris_color, part = "body") %>%  # IRIS
   bg(i = 2, bg = irrs_color, part = "body") %>%  # IRRS
   bg(i = 3, bg = iross_color, part = "body") %>%  # IROSS
   bg(i = 4, bg = mixed_color, part = "body") %>%  # Mixed
   bg(i = 5, bg = undetermined_color, part = "body") %>%  # Undetermined
-  color(i = 1:5, color = "white", part = "body") %>%  # White text for first five rows
+  bg(i = 1, j = "Example Lead", bg = "white", part = "body") %>%
+  fontsize(size = 10, part = "header") %>%
+  fontsize(size = 10, part = "body") %>%
+  merge_v(j = ~ `Example Lead`) %>%
+  color(i = 2:5, color = "white", part = "body") %>%  # White text for first five rows
+  # color(i = 1, j = "Example Lead", color = "black", part = "body") %>%
   add_footer_row(
     values = paste0(
       "Graph Data is based on the implementation of the IRRS, IRIS, and IROSS in 2024. ",
@@ -97,8 +103,9 @@ figure7 <- flextable(recuse_table) %>%
     colwidths = ncol(recuse_table)  # Ensure footer spans the full table width dynamically
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure 5: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024")  # Add caption
-
+  set_caption("Figure 5: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024") %>%  # Add caption 
+  fix_border_issues()
+  
 # Display Merged Table
 
-figure7 # this is now Fiure 5 in AR new version 
+ar.1.2
