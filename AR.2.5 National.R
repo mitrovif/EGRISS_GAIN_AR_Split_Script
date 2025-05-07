@@ -61,7 +61,7 @@ partnership_data <- partnership_data %>%
   select('Partnership Type', all_of(year_order))
 
 # Create FlexTable with EGRISS Color Scheme
-partnership_flextable <- flextable(partnership_data) %>%
+ar.2.5 <- flextable(partnership_data) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
   set_table_properties(width = 1, layout = "autofit") %>%
@@ -77,4 +77,4 @@ partnership_flextable <- flextable(partnership_data) %>%
   autofit()
 
 # Display Table in RStudio Viewer (for verification)
-partnership_flextable
+ar.2.5
