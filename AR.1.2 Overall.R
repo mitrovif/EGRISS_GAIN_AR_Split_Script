@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# Overview of the Implementation of the IRRS, IRIS, and IROSS (Figure 5) in new version of AR 
+# AR.1.2: Overview of the Implementation of the IRRS, IRIS, and IROSS (Figure 5) in new version of AR 
 # ============================================================================================================
 
 group_roster_file <- file.path(working_dir, "analysis_ready_group_roster.csv")
@@ -103,7 +103,18 @@ ar.1.2 <- flextable(recuse_table) %>%
     colwidths = ncol(recuse_table)  # Ensure footer spans the full table width dynamically
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure 5: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024") %>%  # Add caption 
+set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.1.2: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024 (Figure 5, AR pg.25)",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%  # Add caption 
   fix_border_issues()
   
 # Display Merged Table

@@ -71,7 +71,7 @@ word_doc <- word_doc %>%
   
   # Add AR.6.1 table AR.6.2 and AR.6.3 at the End
   body_add_par("AR.6.1: Initial Overview of Publications", style = "heading 2") %>%
-  body_add_flextable(AR.6.1) %>%
+  body_add_flextable(ar.6.1) %>%
   body_add_break() %>%
   body_add_par("AR.6.2: Overview of Respondents Using Publications", style = "heading 2") %>%
   body_add_flextable(ar.6.2) %>%

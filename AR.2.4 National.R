@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# Figure 9: Overview of Respondents Facing Challenges and Types of Challenges Identified
+# AR.2.4:  Overview of Respondents Facing Challenges and Types of Challenges Identified (Figure 8)
 # ============================================================================================================
 
 library(flextable)
@@ -104,6 +104,17 @@ ar.2.4 <- flextable(combined_data) %>%
     colwidths = ncol(combined_data)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure 9: Overview of Respondents Facing Challenges and Types of Challenges Identified")
-
+  set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.2.4:Overview of Respondents Facing Challenges and Types of Challenges Identified (Figure 8, AR pg.28)",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%
+  fix_border_issues()
 print(ar.2.4)

@@ -1,6 +1,6 @@
 
 # =============================================================================================================
-# Generate Institutional Implementation breakdown table - by implementation level
+# AR.3.2: Generate Institutional Implementation breakdown table - by implementation level
 # =============================================================================================================
 
 institutional_implementation_table_level <- group_roster %>%
@@ -62,9 +62,30 @@ ar.3.2 <- flextable(institutional_implementation_table_level) %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   fontsize(size = 10, part = "all") %>%  # Set font size
   autofit() %>%
-  add_footer_lines(values = "Source: GAIN 2024 Data") %>%
+  add_footer_row(
+    values = paste0(
+      "Footnote: Includes institutionally led examples (g_conled == 2 or 3) by implementation level and ",
+      "recommendation use (PRO09). Implementation Level coded as Global (PRO03B == 1), Regional (2), ",
+      "Country (3), Undetermined (8 or otherwise). Use of Recommendations: Using (PRO09 == 1), ",
+      "Not Using (PRO09 == 2), Undetermined (PRO09 == 8 or otherwise). Counts reflect the number of ",
+      "examples per year (ryear 2021–2024). Summary rows (Use of Recommendations == 'Total') aggregate ",
+      "across recommendation use categories for each implementation level."
+    ),
+    colwidths = ncol(institutional_implementation_table_level)
+  ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption(caption = "Institutional Implementation Breakdown by Implementation Level") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.3.2: Institutional Implementation Breakdown by Implementation Level (AR pg.49)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%
   fix_border_issues()
 
 ar.3.2             

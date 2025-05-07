@@ -1,6 +1,6 @@
 
 # ======================================================
-# Figure 7 - Step 1: Aggregate PRO08 variables into specified categories and count each source by year
+# AR.2.2. Figure 7 - Step 1: Aggregate PRO08 variables into specified categories and count each source by year
 # ======================================================
 
 # Step 1: Prepare the data for National Examples (g_conled == 1)
@@ -148,6 +148,18 @@ ar.2.2 <- flextable(aggregated_data) %>%
   ) %>%
   fontsize(size = 7, part = "footer") %>%
   set_caption("Figure 7: Overview Data Sources and Tools for Country-led Examples 2024") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.2.2: Overview Data Sources and Tools for Country-led Examples, by year(Figure 7, AR pg. 27)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%
   fix_border_issues()
 
 # Display Updated Table

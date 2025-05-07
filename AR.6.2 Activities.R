@@ -91,7 +91,26 @@ ar.6.2 <- flextable(combined_data) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   autofit() %>%
-  set_caption("AR.6.2: Overview of Respondents Facing Challenges and Types of Challenges Identified")
-
+  add_footer_row(
+    values = paste0(
+      "Footnote: Rows 1–3 (“Publications Seen/Received”, “No Publications Seen/Received”, “No Response or Don't Know”) are from ACT03 responses in years 2023–2024. ",
+      "Subsequent rows list specific challenges identified via ACT04.* variables (including .1 versions merged), recoded to human-readable labels. ",
+      "Counts reflect the number of respondents selecting each option per year."
+    ),
+    colwidths = ncol(combined_data)
+  ) %>%
+  fontsize(size = 7, part = "footer") %>%set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.6.2: Overview of Respondents Facing Challenges and Types of Challenges Identified, by year",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%  # Add caption 
+  fix_border_issues()
 # Display Table in RStudio Viewer
 ar.6.2

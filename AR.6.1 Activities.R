@@ -1,5 +1,5 @@
 # =============================================================================================================
-# Add Memberships - Summary by Year and Organization Type (Merged Groups)
+# AR.6.1 Add Memberships - Summary by Year and Organization Type (Merged Groups)
 # =============================================================================================================
 
 # Custom Colors
@@ -12,60 +12,85 @@ main_roster_file <- file.path(working_dir, "analysis_ready_main_roster.csv")
 main_roster <- read.csv(main_roster_file)
 
 # Filter and categorize interest data
+
 future_interest_summary <- main_roster %>%
-  select(c("ACT02", "mcountry", "morganization", "year", "LOC01")) %>%
+  # only the columns we need
+  select(ACT02, mcountry, morganization, year, LOC01) %>%
+  
+  # coerce ACT02 to character so we never mix types
+  mutate(ACT02_chr = as.character(ACT02)) %>%
+  
+  # derive both Interest and Organization_Type, all branches as character
   mutate(
-    ACT02_chr = as.character(ACT02),  # force consistent type
     Interest = case_when(
-      ACT02_chr %in% c("1", "YES") ~ "Interested in Learning about Membership",
+      ACT02_chr %in% c("1", "YES")                   ~ "Interested in Learning about Membership",
       ACT02_chr %in% c("2", "NO", "8", "DON'T KNOW") ~ "Not Interested in Learning about Membership or Don't Know",
-      ACT02_chr %in% c("9", "Unknown") ~ NA_character_,
-      TRUE ~ ACT02_chr  # default fallback, now consistent
+      ACT02_chr %in% c("9", "Unknown")               ~ NA_character_,      # explicit char NA
+      TRUE                                            ~ ACT02_chr          # already a character
     ),
     Organization_Type = case_when(
-      LOC01 == 1 ~ "NSO",
-      LOC01 %in% c(2, 3) ~ "International and Other Organizations",
-      TRUE ~ "Other"
+      LOC01 == 1                                     ~ "NSO",
+      LOC01 %in% c(2, 3)                             ~ "International and Other Organizations",
+      TRUE                                            ~ "Other"
     )
   ) %>%
-  select(-ACT02_chr) %>%
+  select(-ACT02_chr) %>%                             # drop helper
   filter(!is.na(Interest), year %in% c(2023, 2024)) %>%
   group_by(Interest, Organization_Type, year, .drop = FALSE) %>%
-  summarize(`Number of Institutions` = n(), .groups = "drop") %>%
-  complete(Interest, Organization_Type, year = c(2023, 2024), fill = list(`Number of Institutions` = 0)) %>%
-  pivot_wider(names_from = year, values_from = `Number of Institutions`, values_fill = 0) %>%
+  summarise(`Number of Institutions` = n(), .groups = "drop") %>%
+  complete(
+    Interest, Organization_Type,
+    year = c(2023, 2024),
+    fill = list(`Number of Institutions` = 0)
+  ) %>%
+  pivot_wider(
+    names_from  = year,
+    values_from = `Number of Institutions`,
+    values_fill = 0
+  ) %>%
   rename(`Year 2023` = `2023`, `Year 2024` = `2024`) %>%
-  mutate(across(c(`Year 2023`, `Year 2024`), as.character))  # Convert both to character for consistency
+  mutate(across(c(`Year 2023`, `Year 2024`), as.character))
 
-# Suppress redundant interest labels
+# suppress repeated labels
 future_interest_summary <- future_interest_summary %>%
-  mutate(Interest = replace(Interest, duplicated(Interest), ""))
+  mutate(Interest = ifelse(duplicated(Interest), "", Interest))
+
 
 # ---------------------------------------------------------------------------------------
 # SECOND TABLE: List of Interested Organizations and Countries
 # ---------------------------------------------------------------------------------------
-
-# Extract list of interested organizations and countries
 interested_organizations <- main_roster %>%
-  filter(ACT02 %in% c(1, "YES"), year %in% c(2023, 2024)) %>%
+  # again, pull same cols and coerce to char
+  select(ACT02, mcountry, morganization, year, LOC01) %>%
+  mutate(ACT02_chr = as.character(ACT02)) %>%
+  
+  # filter on the CHARACTERS "1" and "YES"
+  filter(ACT02_chr %in% c("1", "YES"), year %in% c(2023, 2024)) %>%
+  
+  # now set your two new columns, all character RHS
   mutate(
     Interest = "Interested in Learning about Membership",
     Organization_Type = case_when(
-      LOC01 == 1 ~ "NSO",
-      LOC01 %in% c(2, 3) ~ "International and Other Organizations",
-      .default = "Other"
+      LOC01 == 1                          ~ "NSO",
+      LOC01 %in% c(2, 3)                  ~ "International and Other Organizations",
+      TRUE                                 ~ "Other"
     )
   ) %>%
   group_by(Interest, Organization_Type, year) %>%
-  summarize(
-    `List of Organizations and Countries` = paste(
-      unique(paste(morganization, "(", mcountry, ")", sep = "")), 
-      collapse = "; "),
+  summarise(
+    `List of Organizations and Countries` = paste0(
+      unique(paste(morganization, "(", mcountry, ")")),
+      collapse = "; "
+    ),
     .groups = "drop"
   ) %>%
-  pivot_wider(names_from = year, values_from = `List of Organizations and Countries`, values_fill = "None") %>%
+  pivot_wider(
+    names_from  = year,
+    values_from = `List of Organizations and Countries`,
+    values_fill = "None"
+  ) %>%
   rename(`Year 2023` = `2023`, `Year 2024` = `2024`) %>%
-  mutate(across(c(`Year 2023`, `Year 2024`), as.character))  # Convert both to character for consistency
+  mutate(across(c(`Year 2023`, `Year 2024`), as.character))
 
 # Combine both data tables
 combined_data <- bind_rows(
@@ -126,12 +151,25 @@ ar.6.1 <- flextable(combined_data) %>%
   #merge_at(i = 12, j = 1:ncol(combined_data_display), part = "body") %>%
   bg(i = c(1, 9), bg = "#d9d9d9", part = "body") %>%
   align(i = c(1, 12), align = "left", part = "body") %>%
-  vline(i = 11, j = 1:ncol(combined_data_display), border = fp_border(width = 0), part = "body") %>%
+  vline(i = 11, j = 1:ncol(combined_data), border = fp_border(width = 0), part = "body") %>%
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption(caption = "Interest in EGRISS Membership by Country and Year") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.6.1: Interest in learning more about EGRISS membership, by country and year",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%  # Add caption 
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   fix_border_issues()
+  
+  
 
 ar.6.1
 

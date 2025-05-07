@@ -1,5 +1,5 @@
 # ============================================================================================================
-# Unique Country Count for Use of Recommendations (PRO09 == 1) by Leadership Type
+# AR.1.4: Unique Country Count for Use of Recommendations by Leadership Type
 # ============================================================================================================
 
 # EGRISS Color Scheme
@@ -120,7 +120,18 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   fontsize(size = 7, part = "footer") %>%
   
   # Updated Caption
-  set_caption("Unique Country Count by Examples led by distinct countries and Year for Use of Recommendations (PRO09 == 1)")
-
+set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.1.4: Count of unique countries with country-led implementation examples, by distinct countries and year",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%
+  fix_border_issues()
 # Display Table
 ar.1.4

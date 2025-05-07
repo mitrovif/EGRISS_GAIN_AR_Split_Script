@@ -152,17 +152,27 @@ ar.1.1 <- flextable(merged_df) %>%
       "Footnote: This data supports Figure 4 in the 2024 Annual Report. ",
       "It tracks national and institutional examples of EGRISS recommendation use. ",
       "Definitions: ",
-      "• Nationally Led: Country-led data collection initiatives. ",
-      "• Institutionally Led: Data collection led by international organizations without explicit country leadership. ",
-      "• CSO-Led or Other: Data collection by civil society organizations or other entities. ",
-      "• PRO09: Identifies if EGRISS recommendations were used in data collection efforts. "
+      " Nationally Led: Country-led data collection initiatives. ",
+      " Institutionally Led: Data collection led by international organizations without explicit country leadership. ",
+      " CSO-Led or Other: Data collection by civil society organizations or other entities. ",
+      " PRO09: Identifies if EGRISS recommendations were used in data collection efforts. "
     ),
     colwidths = ncol(merged_df) - 2
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure 4: Trend of Country and Institutional-led Implementation Examples (2021-2024)")
+  ## <-- styled caption as a formatted paragraph: 
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.1.1: Trend of Country and Institutional-led Implementation Example, by year (Figure 4, AR pg. 24)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )
 
 # Display Merged Table
 ar.1.1
-
-

@@ -1,6 +1,6 @@
 
 # =============================================================================================================
-# Add Future Projects 
+#  AR.4.1: Future Examples Using Different Types of Data Source or Tool 
 # =============================================================================================================
 
 fpr05_columns <- grep("^FPR05", names(group_roster2), value = TRUE)
@@ -45,8 +45,26 @@ ar.4.1 <- flextable(source_summary) %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   fontsize(size = 10, part = "all") %>%  # Set font size
   autofit() %>%
-  add_footer_lines(values = "Source: GAIN 2024 Data") %>%
+  add_footer_row(
+    values = paste0(
+      "Footnote: Counts are based on FPR05_* fields in `group_roster2` (converted to numeric) where a value of 1 ",
+      "indicates the use of that source/tool. “Source” categories derived via grepl on variable names: Survey, ",
+      "Administrative Data, Census, Data Integration, Non-Traditional, Strategy, Guidance/Toolkit, Workshop/Training, ",
+      "Other, Unknown. “Total” row is the sum across all categories."
+    ),
+    colwidths = ncol(source_summary)
+  ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption(caption = "Future Projects Breakdown by Source for 2024")
-
+set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.4.1:  Future Examples Using Different Types of Data Source or Tool (Figure 14, AR pg.50)",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)
 ar.4.1                          

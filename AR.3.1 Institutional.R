@@ -1,6 +1,6 @@
 
 # ===========================================================================================================
-# Generate Institutional Implementation breakdown table - by source
+# AR.3.1:  Generate Institutional Implementation breakdown table - by source
 # ============================================================================================================
 
 institutional_implementation_table <- group_roster %>%
@@ -48,9 +48,29 @@ ar.3.1 <- flextable(institutional_implementation_table) %>%
   fontsize(size = 10, part = "all") %>%  # Set font size
   bg(part = "header", bg = "#4cc3c9") %>%
   autofit() %>%
-  add_footer_lines(values = "Source: GAIN 2024 Data") %>%
+  add_footer_row(
+    values = paste0(
+      "Footnote: Table shows institutionally led examples (g_conled == 2) by data source and whether ",
+      "they used EGRISS recommendations (PRO09). “Source” is coded as Survey (PRO08.A), Administrative Data (PRO08.B), ",
+      "Census (PRO08.C), Data Integration (PRO08.D) or Other (any of PRO08.E/F/G/H/X). “Use of Recommendations” ",
+      "categories: Using (PRO09 == 1), Not Using (PRO09 == 2), Don't Know (PRO09 == 8), Unknown (else). ",
+      "Counts reflect total examples per year (ryear 2021–2024) and summed in ‘Total’."
+    ),
+    colwidths = ncol(institutional_implementation_table)
+  ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption(caption = "Institutional Implementation Breakdown") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.3.1: Institutional Implementation Breakdown, by year (AR pg.49)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%
   fix_border_issues()
 
 ar.3.1

@@ -1,6 +1,6 @@
 
 #============================================================================================================
-# Unique Country List
+#AR.1.5 Unique Country List
 #============================================================================================================
 
 # Function to list countries by region
@@ -34,8 +34,18 @@ ar.1.5 <- flextable(list_countries_by_region(group_roster)) %>%
   add_footer_row(values = "Footnote: This table presents the list of countries for each region based on metadata information.",
                  colwidths = ncol(list_countries_by_region(group_roster)) - 1) %>%  # Adjust colwidths due to the column deletion
   fontsize(size = 7, part = "footer") %>%
-  
-  set_caption("List of Countries by Region")
-
+ set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.1.5: List of countries with country-led implementation using recommendations by region",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%
+  fix_border_issues()
 # Display Second Table
 ar.1.5

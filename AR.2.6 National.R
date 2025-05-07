@@ -74,7 +74,18 @@ if (nrow(mention_counts) > 0) {
 
 # Add Caption
 ar.2.6 <- ar.2.6 %>%
-  set_caption("Organization Mentions by Year")  # Table Caption
-
+set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.2.6: Mentions of international partners in country-led implementations, by year (AR pg.28)",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%
+  fix_border_issues()
 # Display the Table
 print(ar.2.6)

@@ -1,5 +1,5 @@
 # =============================================================================================================
-# Add Future Projects with Quarterly Breakdown
+# AR.4.2: Add Future Projects with Quarterly Breakdown
 # =============================================================================================================
 
 #rm(list = ls())
@@ -147,8 +147,7 @@ population_summary <- group_roster2 %>%
   count(Population_Type, Source_Variable) %>%
   pivot_wider(names_from = Source_Variable, values_from = n, values_fill = 0)
 
-# Output the new population-specific table
-list(population_summary_flextable)
+
 
 # Create FlexTables for Word
 quarter_summary_flextable <- flextable(quarter_summary) %>%
@@ -295,7 +294,30 @@ ar.4.2 <- flextable(merged_data) %>%
   merge_v(j = 1) %>%  # Merge vertical cells in first column
   fontsize(size = 9, part = "body") %>%
   set_table_properties(layout = "autofit") %>%
-  set_caption("AR.4.2 Future Projects Overview Including Type of Example with Column Totals") %>%
+  add_footer_row(
+    values = paste0(
+      "Footnote: This table combines quarterly, population, regional and example-type breakdowns of future ",
+      "projects based on `group_roster2`. Data sources/tools (FPR05.*) were recoded into categories such as Survey, ",
+      "Administrative Data, Census, Data Integration, Non-Traditional, Strategy, Guidance/Toolkit, Workshop/Training, Other. ",
+      "Quarter (Q1–Q4) derived from `q2025`; Population types from FPR04.* (Refugee, IDP, Stateless, Mixed); ",
+      "Region via the `region` field; Example Type from LOC01 (1 = Country; 2/3 = International). Counts are the number ",
+      "of future projects per category for 2025."
+    ),
+    colwidths = ncol(merged_data)
+  ) %>%
+  fontsize(size = 7, part = "footer") %>% 
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.4.2 Future Projects Overview, by source or tool, quarter, population and region",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%
   fix_border_issues()
 
 ar.4.2

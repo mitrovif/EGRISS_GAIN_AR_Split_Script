@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# Figure 6: Implementation of the Recommendations by Region (in new version of AR)
+# AR.2.1: Figure 6: Implementation of the Recommendations by Region (in new version of AR)
 # ============================================================================================================
 
 # Step 1: Extract Country-led Examples Using Recommendations
@@ -70,7 +70,18 @@ ar.2.1 <- flextable(regional_data_combined) %>%
     colwidths = ncol(regional_data_combined)  # Ensure footer spans full table width
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure 6: Implementation of the Recommendations by Region") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.2.1: Country-led implementation of the Recommendations by region (Figure 6, AR pg.25)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%
   fix_border_issues()
 
 # Display the table

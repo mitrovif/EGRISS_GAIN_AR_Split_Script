@@ -75,7 +75,27 @@ ar.6.3 <- flextable(combined_data) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   autofit() %>%
-  set_caption("AR.6.3: Overview of Respondents Using Publications and Impact of Publications")
-
+  # ← Detailed footnote
+  add_footer_row(
+    values = paste0(
+      "Footnote: The first three rows (“Publications Impacted”, “Publications Not Impacted”, “No Response or Don't Know about Impact”) are based on ACT05 responses for year 2024. ",
+      "Subsequent rows list impacts identified via ACT06.* variables recoded to descriptive labels (e.g. “Increased general knowledge…”, “Enhanced data collection…”, etc.). ",
+      "Counts reflect the number of respondents selecting each option in 2024."
+    ),
+    colwidths = ncol(combined_data)
+  ) %>%
+  fontsize(size = 7, part = "footer") %>%set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.6.3: Overview of Respondents Using Publications and Impact of Publications",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%  # Add caption 
+  fix_border_issues()
 # Display Table in RStudio Viewer
 ar.6.3

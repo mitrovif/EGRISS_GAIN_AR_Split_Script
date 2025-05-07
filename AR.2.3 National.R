@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# Figure XX (text in AR): Components of EGRISS Recommendations Most Frequently Used
+# AR.2.3: (text in AR) Components of EGRISS Recommendations Most Frequently Used
 # ============================================================================================================
 
 # Step 1: Load the dataset
@@ -133,7 +133,18 @@ ar.2.3 <- flextable(merged_table) %>%
   fontsize(size = 7, part = "footer") %>%
   
   # Updated Caption
-  set_caption("Figure XX (text in AR): Components of EGRISS Recommendations Most Frequently Used")
-
+set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.2.3: Components of EGRISS Recommendations Most Frequently Used, by recommendation and type (AR pg.27)",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)%>%
+  fix_border_issues()
 # Display the Final Table
 print(ar.2.3)

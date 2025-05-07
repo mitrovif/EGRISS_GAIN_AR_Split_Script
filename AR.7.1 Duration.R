@@ -1,6 +1,6 @@
 
 # ======================================================
-# Script: Calculate `example_duration` from PRO04_year and PRO05_year
+# AR: 7.1: Script: Calculate `example_duration` from PRO04_year and PRO05_year
 # Description:
 # - If either year is NA → NA
 # - If either year is "9999" or "9998" → 99
@@ -147,7 +147,7 @@ aggregated_institutional <- group_roster %>%
   mutate(Total = rowSums(select(., -c(`Use of Recommendations`, Source)), na.rm = TRUE)) %>%
   mutate(`Example Category` = "Overall Institution Examples")
 
-# Step 3: Combine national + institutional
+# after your bind_rows(...) and arrange(...) step, insert:
 aggregated_data <- bind_rows(aggregated_national, aggregated_institutional) %>%
   mutate(
     `Use of Recommendations` = factor(
@@ -159,13 +159,11 @@ aggregated_data <- bind_rows(aggregated_national, aggregated_institutional) %>%
     `Example Category`,
     `Use of Recommendations`,
     factor(Source, levels = c("Survey", "Census", "Administrative Data", "Data Integration", "Other"))
-  )
+  ) %>%
+  # ← ensure Example Category is first
+  select(`Example Category`, everything())
 
-# Step 4: Create FlexTable
-solid_border <- fp_border(color = "#3b71b3", width = 2, style = "solid")
-dashed_border <- fp_border(color = "#3b71b3", width = 2, style = "dashed")
-default_border <- fp_border(color = "gray", width = 0.5)
-
+# now build the flextable with footnote
 ar.7.1 <- flextable(aggregated_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
@@ -177,35 +175,45 @@ ar.7.1 <- flextable(aggregated_data) %>%
   border_inner_h(border = fp_border(color = "gray", width = 0.5)) %>%
   fontsize(size = 8) %>%
   autofit() %>%
-  # Graph Data National Examples
+  # highlight rows as before…
   border(i = which(aggregated_data$`Example Category` == "Graph Data National Examples" &
                      aggregated_data$`Use of Recommendations` == "Using Recommendations"),
-         border.top = solid_border,
-         border.bottom = solid_border) %>%
+         border.top = solid_border, border.bottom = solid_border) %>%
   border(i = which(aggregated_data$`Example Category` == "Graph Data National Examples" &
                      aggregated_data$`Use of Recommendations` == "Not Using Recommendations and Other"),
-         border.top = dashed_border,
-         border.bottom = dashed_border) %>%
-  # Overall Institution Examples
+         border.top = dashed_border, border.bottom = dashed_border) %>%
   border(i = which(aggregated_data$`Example Category` == "Overall Institution Examples"),
-         border.top = default_border,
-         border.bottom = default_border) %>%
+         border.top = default_border, border.bottom = default_border) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
+  
+  # ← new detailed footnote
   add_footer_row(
     values = paste0(
-      "Footnote: Graph Data National Examples are categorized by time until project conclusion. ",
-      "Sources represent data types used in examples: ",
-      "• Survey, Census, Administrative Data, Data Integration, and Other (PRO08.*). ",
-      "This is a multiple-response question, meaning one example can feature multiple sources or tools."
+      "Footnote: “Example Category” distinguishes nationally-led vs institutionally-led examples. ",
+      "“Use of Recommendations” is PRO09==1 (Using) vs PRO09==2,8 (Not Using/Other). ",
+      "“Source” derives from PRO08.* flags (Survey, Census, Administrative Data, Data Integration, Other). ",
+      "“Example Duration Category” bins years between PRO04_year and PRO05_year (NA→Undetermined, 9998/9999→No end planned, ",
+      "0–1 yrs, 2–3 yrs, 4–5 yrs, >5 yrs). Counts are number of examples per combination."
     ),
     colwidths = ncol(aggregated_data)
   ) %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 10, part = "body") %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Figure: Sources Used by Project Duration Category") %>%
+  
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.7.1: Length of implementation by use of recommendations and example type",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  ) %>%
   fix_border_issues()
 
-# View the result
-print(ar.7.1)
-
+# then view
+ar.7.1

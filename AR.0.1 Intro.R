@@ -2,7 +2,7 @@
 # Set Working Directory Dynamically
 # ======================================================
 # Copy-Paste your Windows file path (with backslashes)
-working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-03-20_11-21-50"
+working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-05-02_12-48-29"
 
 # Automatically replace backslashes (\) with forward slashes (/)
 working_dir <- gsub("\\\\", "/", working_dir)
@@ -62,7 +62,7 @@ create_flextable <- function(data, title) {
 # ======================================================
 
 # Define the path for additional scripts
-scripts_dir <- "C:/Users/mitro/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024/11 Reporting/AR Data Split Script"
+scripts_dir <- "C:/Users/mitro/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024/11 Reporting/Split-AR-Script"
 
 # Overall files
 source(file.path(scripts_dir, "AR.1.1 Overall.R"))
@@ -90,6 +90,7 @@ source(file.path(scripts_dir, "AR.5.1 GRF.R"))
 source(file.path(scripts_dir, "AR.6.1 Activities.R"))
 source(file.path(scripts_dir, "AR.6.2 Activities.R"))
 source(file.path(scripts_dir, "AR.6.3 Activities.R"))
+source(file.path(scripts_dir, "AR.7.1 Activities.R"))
 source(file.path(scripts_dir, "AR.8.1 Map.R"))
 
 # Final Output Script

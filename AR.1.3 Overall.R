@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# Figure 7: Overview Data Sources and Tools for Country-led Examples 2024 (in new version fo AR)
+# AR.1.3: Figure 7: Overview Data Sources and Tools for Country-led Examples 2024 (in new version fo AR)
 # ============================================================================================================
 
 library(dplyr)
@@ -61,11 +61,28 @@ ar.1.3 <- flextable(final_table) %>%
   merge_v(j = ~ `Example Lead`) %>%
   autofit() %>%
   add_footer_row(
-    values = "Graph Data includes combinations of IRRS, IRIS, and IROSS recommendations categorized by lead type.",
+    values = paste0(
+      "Footnote: Includes only projects flagged `g_recuse == \"Mixed\"` in group_roster. ",
+      "Mixed Category defined as: IRRS + IRIS (PRO10.A & PRO10.B == 1), IRRS + IROSS (PRO10.A & PRO10.C == 1), ",
+      "IRIS + IROSS (PRO10.B & PRO10.C == 1), All 3 Combined (PRO10.A & PRO10.B & PRO10.C == 1). ",
+      "`Example Lead` indicates Nationally Led (g_conled == 1) vs Institutionally Led (g_conled %in% c(2,3)). ",
+      "Counts by year (2021–2024) reflect the `ryear` field."
+    ),
     colwidths = ncol(final_table)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Overview of Mixed Use of Recommendations by Lead Type in 2024") %>%
+ set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.1.3: Overview of the Mixed Implementation of the IRRS, IRIS and IROSS, by year (AR pg.24)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%
   fix_border_issues()
 
 # Display the new table

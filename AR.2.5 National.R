@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# Breakdown of Nationally Led Partnerships
+# AR.2.5: Breakdown of Nationally Led Partnerships
 # ============================================================================================================
 
 library(dplyr)
@@ -74,6 +74,30 @@ ar.2.5 <- flextable(partnership_data) %>%
   border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   set_caption("Breakdown of Nationally Led Partnerships by Year and Type") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.2.5: Overview of country-led implementation partnerships, by year and type (AR pg 28)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
+      )
+    )
+  )%>%
+  add_footer_row(
+    values = paste0(
+      "Footnote: Counts are based on projects with g_conled == 1 (nationally led) in analysis_ready_group_roster.csv. ",
+      "“Total Nationally Led Projects” = all country-led initiatives; “with Partnerships” = subset where PRO17 == 1. ",
+      "Partnership types are coded as: National Partnership (PRO18.A), International Organization Partnership (PRO18.B), ",
+      "Academia Partnership (PRO18.C). Years 2021–2024 correspond to the ryear field. Inner counts reflect the ",
+      "number of nationally led projects each year by partnership type."
+    ),
+    colwidths = ncol(partnership_data)
+  ) %>%
+  fontsize(size = 7, part = "footer") %>%
+  fix_border_issues()%>%
   autofit()
 
 # Display Table in RStudio Viewer (for verification)

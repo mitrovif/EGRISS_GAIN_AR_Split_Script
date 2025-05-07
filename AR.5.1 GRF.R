@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# Breakdown of GRF Pledges
+# AR.5.1: Breakdown of GRF Pledges
 # ============================================================================================================
 
 # Load necessary libraries
@@ -119,7 +119,17 @@ ar.5.1 <- flextable(merged_summary) %>%
     colwidths = ncol(merged_summary)  # Ensure footer spans the full table width
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-  set_caption("Summary Table: GFR Data on Pledges")
-
+set_caption(
+  caption = as_paragraph(
+    as_chunk(
+      "AR.5.1: GFR Data on Pledges Implementation, by stage, region, and entity type ",
+      props = fp_text(
+        font.family = "Helvetica",
+        font.size   = 10,
+        italic      = FALSE
+      )
+    )
+  )
+)
 # Display Table
 print(ar.5.1)
