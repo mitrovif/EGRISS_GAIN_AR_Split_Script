@@ -214,6 +214,6 @@ ar.7.1 <- flextable(aggregated_data) %>%
     )
   ) %>%
   fix_border_issues()
-
+ar.7.1 <- autofit(ar.7.1)
 # then view
 ar.7.1

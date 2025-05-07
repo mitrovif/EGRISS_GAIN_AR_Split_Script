@@ -319,5 +319,6 @@ ar.4.2 <- flextable(merged_data) %>%
     )
   )%>%
   fix_border_issues()
+ar.4.2 <- autofit(ar.4.2)
 
 ar.4.2

@@ -1,86 +1,78 @@
 # ======================================================
 # Add to Word document
 # ======================================================
-
 library(officer)
 
-# Initialize a fresh document
-word_doc <- read_docx()
+# narrow‐margin definition
+default_section <- prop_section(
+  page_size    = page_size(),
+  page_margins = page_mar(
+    top    = 0.3,
+    bottom = 0.3,
+    left   = 0.5,
+    right  = 0.5,
+    header = 0.1,
+    footer = 0.1
+  )
+)
 
-word_doc <- read_docx()  # Initialize a fresh document
-
-# Add structured content to Word (portrait mode)
-word_doc <- word_doc %>%
-  body_add_par("GAIN 2024 Annual Report", style = "heading 1") %>%
-  body_add_flextable(figure6) %>%
-  body_add_break() %>%
-  body_add_flextable(figure7) %>%
-  body_add_break() %>%
-  body_add_flextable(final_flextable) %>%
+word_doc <- read_docx() %>%
+  body_set_default_section(default_section) %>%
   
-  # Switch to landscape mode before Figure 8
+  # === portrait start ===
+  body_add_par("GAIN Survey Annex to EGRISS 2024 Annual Report", style = "centered") %>%
+  
+  # ar.1 tables
+  body_add_flextable(ar.1.1) %>% body_add_break() %>%
+  body_add_flextable(ar.1.2) %>% body_add_break() %>%
+  body_add_flextable(ar.1.3) %>% body_add_break() %>%
+  body_add_flextable(ar.1.4) %>% body_add_break() %>%
+  body_add_flextable(ar.1.5) %>% body_add_break() %>%
+  
+  # portrait → landscape for ar.2.2
+  body_add_flextable(ar.2.1) %>%
   body_end_section_portrait() %>%
-  body_add_par("Figure 8: Breakdown by Year, Use of Recommendations, and Source", style = "heading 2") %>%
-  body_add_flextable(figure8_flextable) %>%
+  body_add_flextable(ar.2.2) %>%
   body_add_break() %>%
-  
-  # Switch back to portrait mode after Figure 8
   body_end_section_landscape() %>%
-  body_add_flextable(text1) %>%
-  body_add_break() %>%
+  # back in portrait
+  body_add_flextable(ar.2.3) %>% body_add_break() %>%
+  body_add_flextable(ar.2.4) %>% body_add_break() %>%
+  body_add_flextable(ar.2.5) %>% body_add_break() %>%
+  body_add_flextable(ar.2.6) %>%
   
-  # Updated Section with Merged Table (Portrait Mode)
-  body_add_par("Breakdown by Category and Region for PRO11/PRO12 Data", style = "heading 2") %>%
-  body_add_flextable(merged_flextable) %>%
+  # ar.3
   body_add_break() %>%
-  body_add_par("Unique Country Count by Region and Year", style = "heading 2") %>%
-  body_add_flextable(unique_country_flextable) %>%
+  body_add_flextable(ar.3.1) %>% body_add_break() %>%
+  body_add_flextable(ar.3.2) %>%
   
-  # Switch to landscape mode for the country list (Landscape Mode)
+  # portrait → landscape for ar.4.2
+  body_add_break() %>%
+  body_add_flextable(ar.4.1) %>%
   body_end_section_portrait() %>%
-  body_add_flextable(country_list_flextable) %>%
-  
-  # Switch back to portrait mode for the Map Image (Portrait Mode)
+  body_add_flextable(ar.4.2) %>%
+  body_add_break() %>%
   body_end_section_landscape() %>%
+  # ar.5, ar.6
+  body_add_flextable(ar.5.1) %>% body_add_break() %>%
+  body_add_flextable(ar.6.1) %>% body_add_break() %>%
+  body_add_flextable(ar.6.2) %>% body_add_break() %>%
+  body_add_flextable(ar.6.3) %>% body_add_break() %>%
+  
+  # ar.7 (landscape)
+  body_end_section_portrait() %>%
+  body_add_flextable(ar.7.1) %>%
+  body_add_break() %>%
+  body_end_section_landscape() %>%
+  # map
   body_add_par("Map of Examples (2024)", style = "heading 2") %>%
   body_add_img(src = "final_combined_maps.png", width = 5.5, height = 7.5) %>%
   body_add_break() %>%
   
-  # Resume in portrait mode with tables (Portrait Mode)
-  body_add_flextable(figure9) %>%
-  body_add_break() %>%
-  body_add_par("Institutional Implementation Breakdown", style = "heading 2") %>%
-  body_add_flextable(institutional_flextable) %>%
-  body_add_break() %>%
-  body_add_par("Future Projects Breakdown by Source for 2024", style = "heading 2") %>%
-  body_add_flextable(source_summary_flextable) %>%
-  body_add_break() %>%
-  body_add_par("Breakdown of Nationally Led Partnerships by Year and Type", style = "heading 2") %>%
-  body_add_flextable(partnership_flextable) %>%
-  # Add AR.4.2_Future table
-  body_add_break() %>%
-  body_add_par("AR.4.2: Future Projects Overview", style = "heading 2") %>%
-  body_add_flextable(AR.4.2_Future) %>%
-  body_add_break() %>%
-  body_add_break() %>%
-  body_add_flextable(organization_mentions_flextable) %>%
-  body_add_break() %>%
-  body_add_par("Summary Table: GFR Data on Pledges", style = "heading 2") %>%
-  body_add_flextable(grf_flextable) %>%
-  
-  
-  # Add AR.6.1 table AR.6.2 and AR.6.3 at the End
-  body_add_par("AR.6.1: Initial Overview of Publications", style = "heading 2") %>%
-  body_add_flextable(ar.6.1) %>%
-  body_add_break() %>%
-  body_add_par("AR.6.2: Overview of Respondents Using Publications", style = "heading 2") %>%
-  body_add_flextable(ar.6.2) %>%
-  body_add_break() %>%
-  body_add_par("AR.6.3: Overview of Publications' Impact", style = "heading 2") %>%
-  body_add_flextable(ar.6.3) %>%
-  
-  # Finish the document with continuous section (portrait by default)
+  # finish
   body_end_section_continuous()
+
+
 
 # ======================================================
 # Save the Word Document
