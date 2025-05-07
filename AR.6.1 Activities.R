@@ -1,3 +1,4 @@
+
 # =============================================================================================================
 # AR.6.1 Add Memberships - Summary by Year and Organization Type (Merged Groups)
 # =============================================================================================================
@@ -59,6 +60,7 @@ future_interest_summary <- future_interest_summary %>%
 # ---------------------------------------------------------------------------------------
 # SECOND TABLE: List of Interested Organizations and Countries
 # ---------------------------------------------------------------------------------------
+
 interested_organizations <- main_roster %>%
   # again, pull same cols and coerce to char
   select(ACT02, mcountry, morganization, year, LOC01) %>%
@@ -139,7 +141,7 @@ ar.6.1 <- flextable(combined_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
-  color(color = "white", part = "header") %>%
+  color(color = "black", part = "header") %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 10, part = "body") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
@@ -168,8 +170,6 @@ ar.6.1 <- flextable(combined_data) %>%
   )%>%  # Add caption 
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   fix_border_issues()
-  
-  
 
 ar.6.1
 
