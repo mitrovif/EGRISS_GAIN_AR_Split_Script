@@ -92,7 +92,7 @@ ar.1.2 <- flextable(recuse_table) %>%
   # color(i = 1, j = "Example Lead", color = "black", part = "body") %>%
   add_footer_row(
     values = paste0(
-      "Graph Data is based on the implementation of the IRRS, IRIS, and IROSS in 2024. ",
+      "Footnote: Graph Data is based on the implementation of the IRRS, IRIS, and IROSS in 2024. ",
       "Nationally led and institutionally led examples have been categorized into distinct recommendation types (IRRS, IRIS, IROSS, Mixed, Undetermined). ",
       "• IRRS: Cases where only IRRS recommendations were used. ",
       "• IRIS: Cases where only IRIS recommendations were used. ",

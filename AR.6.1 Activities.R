@@ -1,3 +1,4 @@
+
 # =============================================================================================================
 # AR.6.1 Add Memberships - Summary by Year and Organization Type (Merged Groups)
 # =============================================================================================================
@@ -55,10 +56,10 @@ future_interest_summary <- main_roster %>%
 future_interest_summary <- future_interest_summary %>%
   mutate(Interest = ifelse(duplicated(Interest), "", Interest))
 
-
 # ---------------------------------------------------------------------------------------
 # SECOND TABLE: List of Interested Organizations and Countries
 # ---------------------------------------------------------------------------------------
+
 interested_organizations <- main_roster %>%
   # again, pull same cols and coerce to char
   select(ACT02, mcountry, morganization, year, LOC01) %>%
@@ -139,7 +140,7 @@ ar.6.1 <- flextable(combined_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
-  color(color = "white", part = "header") %>%
+  color(color = "black", part = "header") %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 10, part = "body") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
@@ -152,6 +153,7 @@ ar.6.1 <- flextable(combined_data) %>%
   bg(i = c(1, 9), bg = "#d9d9d9", part = "body") %>%
   align(i = c(1, 12), align = "left", part = "body") %>%
   vline(i = 11, j = 1:ncol(combined_data), border = fp_border(width = 0), part = "body") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
   add_footer_lines(values = "Source: GAIN 2024 Data") %>%
   fontsize(size = 7, part = "footer") %>%
   set_caption(
@@ -166,10 +168,6 @@ ar.6.1 <- flextable(combined_data) %>%
       )
     )
   )%>%  # Add caption 
-  border_outer(border = fp_border(color = "black", width = 2)) %>%
   fix_border_issues()
-  
-  
 
 ar.6.1
-
