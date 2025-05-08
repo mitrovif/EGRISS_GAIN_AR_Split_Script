@@ -87,7 +87,7 @@ ar.6.3 <- flextable(combined_data) %>%
   fontsize(size = 7, part = "footer") %>%set_caption(
   caption = as_paragraph(
     as_chunk(
-      "AR.6.3: Overview of Respondents Using Publications and Impact of Publications",
+      "AR.6.3: Overview of Respondents Using Publications and Impact of Publications (Not in AR)",
       props = fp_text(
         font.family = "Helvetica",
         font.size   = 10,

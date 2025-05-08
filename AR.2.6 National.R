@@ -1,91 +1,104 @@
 
 # ============================================================================================================
-# Partnerships and Organization Mentions in R with FlexTable
+# AR.2.6: Breakdown of Nationally Led Partnerships
 # ============================================================================================================
 
 library(dplyr)
 library(tidyr)
 library(flextable)
-library(stringr)
+
+# EGRISS Color Scheme
+primary_color <- "#4cc3c9"
+secondary_color <- "#3b71b3"
+accent_color <- "#072d62"
+background_color <- "#f0f8ff"
 
 # Load dataset
-file_path <- "analysis_ready_group_roster.csv"
-group_roster <- read.csv(file_path)
+file_path <- file.path(working_dir, "analysis_ready_group_roster.csv")
+data <- read.csv(file_path)
 
-# Step 1: Partnerships Table (based on PRO18)
-partnership_summary <- group_roster %>%
-  group_by(ryear, PRO18) %>%
-  summarise(Count = n(), .groups = 'drop') %>%
-  pivot_wider(names_from = ryear, values_from = Count, values_fill = 0) %>%
-  mutate(Total = rowSums(across(where(is.numeric))))
+# Define Ordered Partnership Type Labels
+partnership_labels <- c(
+  "PRO18.A" = "National Partnership",
+  "PRO18.B" = "International Organization Partnership",
+  "PRO18.C" = "Academia Partnership"
+)
 
-# Load necessary libraries
-library(dplyr)
-library(stringr)
+# Define Year Order
+year_order <- c("2021", "2022", "2023", "2024")
 
-# List of terms to sum
-terms_to_count <- c("UNHCR", "IOM", "JDC", "UNFPA", "World Bank")
+# Count total nationally led projects
+nationally_led_count <- data %>%
+  filter(g_conled == 1) %>%
+  count(ryear) %>%
+  pivot_wider(names_from = ryear, values_from = n, values_fill = 0) %>%
+  mutate(Partnership_Type = "Total Nationally Led Projects")
 
-# Function to sum the year values for each term in PRO18 using regex
-sum_mentions <- function(term) {
-  # Define the regex pattern to match the term, considering different punctuations and spaces around it
-  regex_term <- paste0("\\b", term, "\\b")  # Match the exact term as a word (boundary)
-  
-  # Sum the year values for rows that match the term in PRO18, excluding NA values in PRO18
-  partnership_summary %>%
-    filter(!is.na(PRO18)) %>%  # Exclude rows with NA in PRO18
-    mutate(term_match = str_detect(PRO18, regex(regex_term, ignore_case = TRUE))) %>% # Check if term is in PRO18
-    filter(term_match) %>%  # Only keep rows where the term is found in PRO18
-    summarise(across(`2021`:`2024`, sum, na.rm = TRUE)) %>% # Sum the values for each year
-    mutate(Organization = paste("Mentions of", term)) # Add term label
-}
+# Count total nationally led projects with partnerships
+partnership_count <- data %>%
+  filter(g_conled == 1, PRO17 == 1) %>%
+  count(ryear) %>%
+  pivot_wider(names_from = ryear, values_from = n, values_fill = 0) %>%
+  mutate(Partnership_Type = "Total Nationally Led Projects with Partnerships")
 
-# Sum mentions for each term
-sums <- lapply(terms_to_count, sum_mentions)
+# Filter for PRO17 == 1 and g_conled == 1
+partnership_data <- data %>%
+  filter(g_conled == 1, PRO17 == 1) %>%  # Only nationally led projects with partnerships
+  select(ryear, PRO18.A, PRO18.B, PRO18.C) %>%  # Keep necessary columns
+  mutate(ryear = as.character(ryear)) %>%  # Ensure ryear is treated as character
+  pivot_longer(cols = starts_with("PRO18"), names_to = "Partnership_Type", values_to = "Value") %>%
+  mutate(Partnership_Type = recode(Partnership_Type, !!!partnership_labels)) %>%  # Apply Partnership Labels
+  filter(Value == 1) %>%  # Keep only rows where partnership exists (Value == 1)
+  count(Partnership_Type, ryear) %>%  # Count occurrences per year
+  pivot_wider(names_from = ryear, values_from = n, values_fill = 0)  # Convert to wide format
 
-# Combine the sums into a single data frame
-mention_counts <- bind_rows(sums)
+# Combine total count with detailed breakdown
+partnership_data <- bind_rows(nationally_led_count, partnership_count, partnership_data)
 
-# Print the final sums
-mention_counts <- mention_counts %>%
-  select(c("Organization", "2021", "2022", "2023", "2024"))
-print(mention_counts)
+# Ensure Year Order in Columns
+partnership_data <- partnership_data %>%
+  mutate('Partnership Type' = Partnership_Type) %>%
+  select('Partnership Type', all_of(year_order))
 
-# Step 3: Create FlexTables
-# Styling Variables
-section_header_color <- "#f3f3f3"  # Light grey for section headers
-
-# Create FlexTable with Styling for specific orgs mentioned
-ar.2.6 <- flextable(mention_counts) %>%
-  theme_vanilla() %>%  # Base theme
-  fontsize(size = 10, part = "all") %>%  # Set font size
+# Create FlexTable with EGRISS Color Scheme
+ar.2.6 <- flextable(partnership_data) %>%
+  theme_vanilla() %>%
+  bold(part = "header") %>%
+  set_table_properties(width = 1, layout = "autofit") %>%
+  fontsize(size = 10, part = "all") %>%
+  bg(bg = "white", part = "body") %>%  # Apply background color
+  bg(bg = primary_color, part = "header") %>%  # Apply primary color to header
+  color(color = "black", part = "header") %>%  # Set header text color to black
+  # bold(j = 1, part = "body") %>%  # Bold the first column (Partnership Type)
+  border_remove() %>%
   border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
-  border_inner_h(part = "body", border = fp_border(color = "gray", width = 1)) %>%
-  bold(part = "header") %>%  # Bold the header
-  bg(part = "header", bg = "#4cc3c9") %>%  # Set header background color
-  autofit() %>%  # Auto-adjust column widths
-  set_table_properties(layout = "autofit", width = 0.6)  # Adjust table sizing
-
-# Apply conditional styling (only if table has rows)
-if (nrow(mention_counts) > 0) {
-  ar.2.6 <- ar.2.6 %>%
-    color(i = 1, color = "black", part = "body")  # Keep the text black (default)
-}
-
-# Add Caption
-ar.2.6 <- ar.2.6 %>%
-set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.2.6: Mentions of international partners in country-led implementations, by year (AR pg.28)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
+  set_caption("Breakdown of Nationally Led Partnerships by Year and Type") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.2.6: Overview of country-led implementation partnerships, by year and type (AR pg 28)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
       )
     )
-  )
-)%>%
-  fix_border_issues()
-# Display the Table
-print(ar.2.6)
+  )%>%
+  add_footer_row(
+    values = paste0(
+      "Footnote: Counts are based on projects with g_conled == 1 (nationally led) in analysis_ready_group_roster.csv. ",
+      "“Total Nationally Led Projects” = all country-led initiatives; “with Partnerships” = subset where PRO17 == 1. ",
+      "Partnership types are coded as: National Partnership (PRO18.A), International Organization Partnership (PRO18.B), ",
+      "Academia Partnership (PRO18.C). Years 2021–2024 correspond to the ryear field. Inner counts reflect the ",
+      "number of nationally led projects each year by partnership type."
+    ),
+    colwidths = ncol(partnership_data)
+  ) %>%
+  fontsize(size = 7, part = "footer") %>%
+  fix_border_issues()%>%
+  autofit()
+
+# Display Table in RStudio Viewer (for verification)
+ar.2.6

@@ -151,7 +151,7 @@ ar.2.2 <- flextable(aggregated_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.2.2: Overview Data Sources and Tools for Country-led Examples, by year(Figure 7, AR pg. 27)",
+        "AR.2.2: Overview Data Sources and Tools for Country-led Examples, by year (Figure 7, AR pg. 27)",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,

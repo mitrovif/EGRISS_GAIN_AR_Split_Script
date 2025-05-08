@@ -204,7 +204,7 @@ ar.7.1 <- flextable(aggregated_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.7.1: Length of implementation by use of recommendations and example type",
+        "AR.7.1: Length of implementation by use of recommendations and example type (Not in AR)",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
@@ -213,7 +213,10 @@ ar.7.1 <- flextable(aggregated_data) %>%
       )
     )
   ) %>%
+  set_table_properties(
+    width = 1,           # 100% of page width
+    layout = "autofit"   # auto‐adjust column widths
+  ) %>%
   fix_border_issues()
-ar.7.1 <- autofit(ar.7.1)
 # then view
 ar.7.1

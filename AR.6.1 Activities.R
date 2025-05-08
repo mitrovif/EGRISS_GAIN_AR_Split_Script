@@ -159,7 +159,7 @@ ar.6.1 <- flextable(combined_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.6.1: Interest in learning more about EGRISS membership, by country and year",
+        "AR.6.1: Interest in learning more about EGRISS membership, by country and year (Not in AR)",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,

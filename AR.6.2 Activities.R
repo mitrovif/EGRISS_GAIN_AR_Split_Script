@@ -102,7 +102,7 @@ ar.6.2 <- flextable(combined_data) %>%
   fontsize(size = 7, part = "footer") %>%set_caption(
   caption = as_paragraph(
     as_chunk(
-      "AR.6.2: Overview of Respondents Facing Challenges and Types of Challenges Identified, by year",
+      "AR.6.2: Overview of Respondents Facing Challenges and Types of Challenges Identified, by year (Not in AR)",
       props = fp_text(
         font.family = "Helvetica",
         font.size   = 10,

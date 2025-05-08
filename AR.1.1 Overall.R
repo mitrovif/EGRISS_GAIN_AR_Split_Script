@@ -172,7 +172,11 @@ ar.1.1 <- flextable(merged_df) %>%
         )
       )
     )
-  )
-
+  )%>%
+set_table_properties(
+  width = 1,           # 100% of page width
+  layout = "autofit"   # auto‐adjust column widths
+) %>%
+  fix_border_issues()
 # Display Merged Table
 ar.1.1

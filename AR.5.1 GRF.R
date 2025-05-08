@@ -122,7 +122,7 @@ ar.5.1 <- flextable(merged_summary) %>%
 set_caption(
   caption = as_paragraph(
     as_chunk(
-      "AR.5.1: GFR Data on Pledges Implementation, by stage, region, and entity type ",
+      "AR.5.1: GFR Data on Pledges Implementation, by stage, region, and entity type (Not in AR)",
       props = fp_text(
         font.family = "Helvetica",
         font.size   = 10,

@@ -309,7 +309,7 @@ ar.4.2 <- flextable(merged_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.4.2 Future Projects Overview, by source or tool, quarter, population and region",
+        "AR.4.2 Future Projects Overview, by source or tool, quarter, population and region (Not in AR)",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,

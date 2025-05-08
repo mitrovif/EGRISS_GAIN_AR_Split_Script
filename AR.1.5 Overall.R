@@ -37,7 +37,7 @@ ar.1.5 <- flextable(list_countries_by_region(group_roster)) %>%
  set_caption(
   caption = as_paragraph(
     as_chunk(
-      "AR.1.5: List of countries with country-led implementation using recommendations by region",
+      "AR.1.5: List of countries with country-led implementation using recommendations by region (Not in AR)",
       props = fp_text(
         font.family = "Helvetica",
         font.size   = 10,

@@ -1,104 +1,102 @@
-
 # ============================================================================================================
-# AR.2.5: Breakdown of Nationally Led Partnerships
+# AR.2.5: Table of Implementation Challenges (PRO22) by Example Lead
 # ============================================================================================================
 
 library(dplyr)
+library(stringr)
 library(tidyr)
 library(flextable)
 
-# EGRISS Color Scheme
-primary_color <- "#4cc3c9"
-secondary_color <- "#3b71b3"
-accent_color <- "#072d62"
-background_color <- "#f0f8ff"
+# Helper: Map raw categories to descriptive labels
+map_challenge <- function(df) {
+  df %>%
+    mutate(
+      `Implementation Challenge` = case_when(
+        Category == "PRO22A" ~ "Lack of clarity (on how to implement)",
+        Category == "PRO22B" ~ "Lack of further guidance (not sufficient methodological information)",
+        Category == "PRO22C" ~ "Lack of technical support",
+        Category == "PRO22D" ~ "Organizational resistance",
+        Category == "PRO22E" ~ "Lack of training and capacity building opportunities",
+        Category == "PRO22F" ~ "Lack of peer-to-peer learning opportunities",
+        Category == "PRO22X" ~ "Other",
+        TRUE ~ "Other"
+      )
+    ) %>%
+    group_by(`Implementation Challenge`) %>%
+    summarise(Responses = sum(Count, na.rm = TRUE), .groups = "drop") %>%
+    arrange(desc(Responses))
+}
 
-# Load dataset
-file_path <- file.path(working_dir, "analysis_ready_group_roster.csv")
-data <- read.csv(file_path)
+# Function to summarise PRO22 fields for a given subset
+summarise_pro22 <- function(data) {
+  # Identify PRO22 structured columns
+  structured_cols <- grep("^PRO22[A-Z]$", names(data), value = TRUE)
+  # Filter to only respondents with at least one PRO22 structured response
+  data <- data %>%
+    filter(rowSums(select(., all_of(structured_cols)), na.rm = TRUE) > 0)
+  
+  # Structured coded responses
+  structured_summary <- data %>%
+    select(all_of(structured_cols)) %>%
+    summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>%
+    pivot_longer(everything(), names_to = "Category", values_to = "Count")
+  
+  # Free-text responses
+  free_text <- data %>%
+    filter(!is.na(PRO22)) %>%
+    filter(!str_detect(PRO22, "^[[:upper:]\\s[:punct:]]+$")) %>%
+    mutate(
+      txt = str_squish(tolower(PRO22)),
+      txt = str_replace_all(txt, "(?=\\b[23]\\s*[-\\)])", "|||")
+    ) %>%
+    separate_rows(txt, sep = "\\|\\|\\|") %>%
+    filter(txt != "") %>%
+    count(txt, name = "Count") %>%
+    rename(Category = txt)
+  
+  # Combine and map challenges
+  bind_rows(structured_summary, free_text) %>%
+    map_challenge()
+}
 
-# Define Ordered Partnership Type Labels
-partnership_labels <- c(
-  "PRO18.A" = "National Partnership",
-  "PRO18.B" = "International Organization Partnership",
-  "PRO18.C" = "Academia Partnership"
-)
+# Generate summaries for each group
+overall_df <- summarise_pro22(group_roster) %>% mutate(`Example Lead` = "Overall")
+national_df <- summarise_pro22(filter(group_roster, g_conled == 1)) %>% mutate(`Example Lead` = "Nationally Led Examples")
+institution_df <- summarise_pro22(filter(group_roster, g_conled %in% c(2,3))) %>% mutate(`Example Lead` = "Institutionally Led Examples")
 
-# Define Year Order
-year_order <- c("2021", "2022", "2023", "2024")
+# Combine and suppress zero counts
+final_pro22 <- bind_rows(overall_df, national_df, institution_df) %>%
+  select(`Example Lead`, `Implementation Challenge`, Responses) %>%
+  filter(Responses > 0)
 
-# Count total nationally led projects
-nationally_led_count <- data %>%
-  filter(g_conled == 1) %>%
-  count(ryear) %>%
-  pivot_wider(names_from = ryear, values_from = n, values_fill = 0) %>%
-  mutate(Partnership_Type = "Total Nationally Led Projects")
-
-# Count total nationally led projects with partnerships
-partnership_count <- data %>%
-  filter(g_conled == 1, PRO17 == 1) %>%
-  count(ryear) %>%
-  pivot_wider(names_from = ryear, values_from = n, values_fill = 0) %>%
-  mutate(Partnership_Type = "Total Nationally Led Projects with Partnerships")
-
-# Filter for PRO17 == 1 and g_conled == 1
-partnership_data <- data %>%
-  filter(g_conled == 1, PRO17 == 1) %>%  # Only nationally led projects with partnerships
-  select(ryear, PRO18.A, PRO18.B, PRO18.C) %>%  # Keep necessary columns
-  mutate(ryear = as.character(ryear)) %>%  # Ensure ryear is treated as character
-  pivot_longer(cols = starts_with("PRO18"), names_to = "Partnership_Type", values_to = "Value") %>%
-  mutate(Partnership_Type = recode(Partnership_Type, !!!partnership_labels)) %>%  # Apply Partnership Labels
-  filter(Value == 1) %>%  # Keep only rows where partnership exists (Value == 1)
-  count(Partnership_Type, ryear) %>%  # Count occurrences per year
-  pivot_wider(names_from = ryear, values_from = n, values_fill = 0)  # Convert to wide format
-
-# Combine total count with detailed breakdown
-partnership_data <- bind_rows(nationally_led_count, partnership_count, partnership_data)
-
-# Ensure Year Order in Columns
-partnership_data <- partnership_data %>%
-  mutate('Partnership Type' = Partnership_Type) %>%
-  select('Partnership Type', all_of(year_order))
-
-# Create FlexTable with EGRISS Color Scheme
-ar.2.5 <- flextable(partnership_data) %>%
+# Create FlexTable for Word
+ar.2.5 <- flextable(final_pro22) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
-  set_table_properties(width = 1, layout = "autofit") %>%
+  bg(part = "header", bg = "#4cc3c9") %>%
   fontsize(size = 10, part = "all") %>%
-  bg(bg = "white", part = "body") %>%  # Apply background color
-  bg(bg = primary_color, part = "header") %>%  # Apply primary color to header
-  color(color = "black", part = "header") %>%  # Set header text color to black
-  # bold(j = 1, part = "body") %>%  # Bold the first column (Partnership Type)
-  border_remove() %>%
   border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
-  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
-  set_caption("Breakdown of Nationally Led Partnerships by Year and Type") %>%
-  set_caption(
-    caption = as_paragraph(
-      as_chunk(
-        "AR.2.5: Overview of country-led implementation partnerships, by year and type (AR pg 28)",
-        props = fp_text(
-          font.family = "Helvetica",
-          font.size   = 10,
-          italic      = FALSE
-        )
-      )
-    )
-  )%>%
+  border_inner_h(part = "all", border = fp_border(color = "gray", width = 0.5)) %>%
+  merge_v(j = ~ `Example Lead`) %>%
+  autofit() %>%
+  # add detailed footnote
   add_footer_row(
     values = paste0(
-      "Footnote: Counts are based on projects with g_conled == 1 (nationally led) in analysis_ready_group_roster.csv. ",
-      "“Total Nationally Led Projects” = all country-led initiatives; “with Partnerships” = subset where PRO17 == 1. ",
-      "Partnership types are coded as: National Partnership (PRO18.A), International Organization Partnership (PRO18.B), ",
-      "Academia Partnership (PRO18.C). Years 2021–2024 correspond to the ryear field. Inner counts reflect the ",
-      "number of nationally led projects each year by partnership type."
+      "Footnote: Counts combine structured PRO22A–F responses (each flag = 1) and free-text PRO22 entries, ",
+      "cleaned and aggregated. “Overall” includes all respondents; “Nationally Led Examples” is g_conled == 1; ",
+      "“Institutionally Led Examples” is g_conled %in% c(2,3). Only challenges with at least one response are shown."
     ),
-    colwidths = ncol(partnership_data)
+    colwidths = ncol(final_pro22)
   ) %>%
-  fontsize(size = 7, part = "footer") %>%
-  fix_border_issues()%>%
-  autofit()
+  fontsize(size = 7, part = "footer") %>%set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.2.5: Breakdown of Implementation Challenges of Recommendations, by example lead (Not in AR)",
+        props = fp_text(font.family = "Helvetica", font.size = 10)
+      )
+    )
+  ) %>%
+  fix_border_issues()
 
-# Display Table in RStudio Viewer (for verification)
+# Display the table
 ar.2.5

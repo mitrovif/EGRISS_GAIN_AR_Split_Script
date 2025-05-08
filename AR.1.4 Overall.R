@@ -123,7 +123,7 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
 set_caption(
   caption = as_paragraph(
     as_chunk(
-      "AR.1.4: Count of unique countries with country-led implementation examples, by distinct countries and year",
+      "AR.1.4: Count of unique countries with country-led implementation examples, by distinct countries and year (Not in AR)",
       props = fp_text(
         font.family = "Helvetica",
         font.size   = 10,
