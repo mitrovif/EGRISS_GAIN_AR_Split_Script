@@ -20,7 +20,21 @@ word_doc <- read_docx() %>%
   body_set_default_section(default_section) %>%
   
   # === portrait start ===
-  body_add_par("GAIN Survey Annex to EGRISS 2024 Annual Report", style = "centered") %>%
+  body_add_fpar(
+    fpar(
+      ftext(
+        "GAIN Survey Annex to EGRISS 2024 Annual Report",
+        prop = fp_text(
+          font.size   = 16,
+          font.family = "Arial",
+          bold        = TRUE
+        )
+      ),
+      fp_p = fp_par(
+        text.align = "center"
+      )
+    )
+  ) %>%
   
   # ar.1 tables
   body_add_flextable(ar.1.1) %>% body_add_break() %>%
