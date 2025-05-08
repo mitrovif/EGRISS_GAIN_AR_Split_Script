@@ -71,7 +71,7 @@ ar.6.3 <- flextable(combined_data) %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 10, part = "body") %>%
   bg(bg = header_color, part = "header") %>%
-  color(color = "white", part = "header") %>%
+  color(color = "black", part = "header") %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   autofit() %>%
@@ -97,5 +97,6 @@ ar.6.3 <- flextable(combined_data) %>%
   )
 )%>%  # Add caption 
   fix_border_issues()
+
 # Display Table in RStudio Viewer
 ar.6.3
