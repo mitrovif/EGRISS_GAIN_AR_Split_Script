@@ -42,6 +42,9 @@ background_color <- "#f0f8ff"
 group_roster_file <- file.path(working_dir, "analysis_ready_group_roster.csv")
 group_roster <- read.csv(group_roster_file)
 
+group_roster_file2 <- file.path(working_dir, "analysis_ready_group_roster2.csv")
+group_roster2 <- read.csv(group_roster_file2)
+
 # Function to create styled flextables
 create_flextable <- function(data, title) {
   flextable(data) %>%
