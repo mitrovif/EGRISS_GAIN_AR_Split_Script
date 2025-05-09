@@ -1,6 +1,8 @@
+
 # ======================================================
 # Add to Word document
 # ======================================================
+
 # Load required library
 library(officer)
 
@@ -12,6 +14,27 @@ footer_section <- fpar(
   run_word_field(field = "NUMPAGES")
 )
 
+# Helper function to center flextables
+center_table <- function(ft) {
+  set_table_properties(ft, layout = "autofit", width = 1, align = "center")
+}
+
+# Apply to all ar.x.y tables (adjust this list as needed)
+table_names <- c(
+  "ar.1.1", "ar.1.2", "ar.1.3", "ar.1.4", "ar.1.5",
+  "ar.2.1", "ar.2.2", "ar.2.3", "ar.2.4", "ar.2.5", "ar.2.6", "ar.2.7",
+  "ar.3.1", "ar.3.2",
+  "ar.4.1", "ar.4.2",
+  "ar.5.1",
+  "ar.6.1", "ar.6.2", "ar.6.3",
+  "ar.7.1"
+)
+for (name in table_names) {
+  if (exists(name)) {
+    assign(name, center_table(get(name)))
+  }
+}
+
 # Define narrow‑margin layout including footer on all pages
 # Wrap footer_section in block_list() as required by prop_section
 default_section <- prop_section(
@@ -19,8 +42,21 @@ default_section <- prop_section(
   page_margins   = page_mar(
     top    = 0.3,
     bottom = 0.3,
-    left   = 0.5,
-    right  = 0.5,
+    left   = 0.7,
+    right  = 0.7,
+    header = 0.1,
+    footer = 0.1
+  ),
+  footer_default = block_list(footer_section)
+)
+
+landscape_section <- prop_section(
+  page_size = page_size(orient = "landscape"),
+  page_margins = page_mar(
+    top    = 0.3,
+    bottom = 0.3,
+    left   = 0.1,
+    right  = 0.1,
     header = 0.1,
     footer = 0.1
   ),
@@ -105,17 +141,20 @@ for(item in list_items) {
     )
 }
 
-  # ar.1 tables
+# ar.1 tables
 word_doc <- word_doc %>% 
   body_add_break() %>% body_add_flextable(ar.1.1) %>% body_add_break() %>%
   body_add_flextable(ar.1.2) %>% body_add_break() %>%
   body_add_flextable(ar.1.3) %>% body_add_break() %>%
   body_add_flextable(ar.1.4) %>% body_add_break() %>%
+  # portrait → landscape for ar.1.5
+  body_end_section_portrait() %>%
   body_add_flextable(ar.1.5) %>% body_add_break() %>%
-  
-  # portrait → landscape for ar.2.2
+  # landscape → portrait for ar.2.1
+  body_end_section_landscape() %>%
   body_add_flextable(ar.2.1) %>%
   body_end_section_portrait() %>%
+  # portrait → landscape for ar.2.2
   body_add_flextable(ar.2.2) %>%
   body_add_break() %>%
   body_end_section_landscape() %>%
@@ -152,12 +191,9 @@ word_doc <- word_doc %>%
   # map
   body_add_par("Map of Examples (2024)", style = "Image Caption") %>%
   body_add_img(src = "final_combined_maps.png", width = 5.5, height = 7.5) %>%
-  body_add_break() %>%
   
   # finish
   body_end_section_continuous()
-
-
 
 # ======================================================
 # Save the Word Document
