@@ -3,6 +3,9 @@
 #  AR.4.1: Future Examples Using Different Types of Data Source or Tool 
 # =============================================================================================================
 
+group_roster_file2 <- file.path(working_dir, "analysis_ready_group_roster2.csv")
+group_roster2 <- read.csv(group_roster_file2)
+
 fpr05_columns <- grep("^FPR05", names(group_roster2), value = TRUE)
 
 sapply(group_roster2[, fpr05_columns], class)
