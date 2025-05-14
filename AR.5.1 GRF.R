@@ -1,4 +1,3 @@
-
 # ============================================================================================================
 # AR.5.1: Breakdown of GRF Pledges
 # ============================================================================================================
@@ -9,127 +8,135 @@ library(dplyr)
 library(flextable)
 
 # File paths
-pledge_data_path <- "Statistical_Inclusion_Pledge_Data.xlsx"
-repeat_pledges_path <- "repeat_pledges_cleaned.csv"
+updated_csv_path <- "Statistical_Inclusion_Pledges_Updated.csv"
 
-# Read the data files
-stat_pledges <- read.csv("Statistical_Inclusion_Pledges_Updated.csv")
+# Read the updated pledges file
+stat_pledges <- read.csv(updated_csv_path, stringsAsFactors = FALSE)
 
-# Clean data
+# Clean data: fill missing region or entity‐type
 stat_pledges <- stat_pledges %>%
   mutate(
-    `region` = ifelse(is.na(`region`), "Region/Country not Reported", `region`),
-    `Submitting.Entity.Type` = ifelse(is.na(`Submitting.Entity.Type`), "Region/Country not Reported", `Submitting.Entity.Type`)
+    region                  = ifelse(is.na(region), "Region/Country not Reported", region),
+    Submitting.Entity.Type  = ifelse(is.na(Submitting.Entity.Type), "Region/Country not Reported", Submitting.Entity.Type)
   )
 
-# Summary by Region
+# Prepare summaries ----------------------------------------------------------------------------------------
+
+# 1. Source_summary: overall counts by source_pledge
+source_summary <- stat_pledges %>%
+  group_by(source_pledge) %>%
+  summarise(
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
+  ) %>%
+  mutate(
+    `GRF Data on Pledges` = case_when(
+      source_pledge == 1 ~ "GRF Database",
+      source_pledge == 2 ~ "GAIN Survey Data",
+      TRUE               ~ "No Data Available"
+    )
+  ) %>%
+  select(`GRF Data on Pledges`, everything(), -source_pledge)
+
+# 2. Region summary
 region_summary <- stat_pledges %>%
-  group_by(`region`) %>%
+  group_by(region) %>%
   summarise(
-    `Design/Planning (Planning stage)` = sum(prog_gain == "DESIGN/PLANNING", na.rm = TRUE),
-    `Implementation (In progress)` = sum(prog_gain == "IMPLEMENTATION", na.rm = TRUE),
-    `Completed (Fulfilled)` = sum(prog_gain == "COMPLETED", na.rm = TRUE),
-    Reported = sum(prog_gain %in% c("DESIGN/PLANNING", "IMPLEMENTATION", "COMPLETED"), na.rm = TRUE),
-    Total_Pledges = n()
-  )
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
+  ) %>%
+  rename(`GRF Data on Pledges` = region)
 
-# Summary by Submitting.Entity.Type
+# 3. Entity summary
 entity_summary <- stat_pledges %>%
-  group_by(`Submitting.Entity.Type`) %>%
+  group_by(Submitting.Entity.Type) %>%
   summarise(
-    `Design/Planning (Planning stage)` = sum(prog_gain == "DESIGN/PLANNING", na.rm = TRUE),
-    `Implementation (In progress)` = sum(prog_gain == "IMPLEMENTATION", na.rm = TRUE),
-    `Completed (Fulfilled)` = sum(prog_gain == "COMPLETED", na.rm = TRUE),
-    Reported = sum(prog_gain %in% c("DESIGN/PLANNING", "IMPLEMENTATION", "COMPLETED"), na.rm = TRUE),
-    Total_Pledges = n()
-  )
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
+  ) %>%
+  rename(`GRF Data on Pledges` = Submitting.Entity.Type)
 
-# Add total row
+# 4. Total row
 total_row <- stat_pledges %>%
   summarise(
-    `GFR Data on Pledges` = "Total",
-    `Design/Planning (Planning stage)` = sum(prog_gain == "DESIGN/PLANNING", na.rm = TRUE),
-    `Implementation (In progress)` = sum(prog_gain == "IMPLEMENTATION", na.rm = TRUE),
-    `Completed (Fulfilled)` = sum(prog_gain == "COMPLETED", na.rm = TRUE),
-    Reported = sum(prog_gain %in% c("DESIGN/PLANNING", "IMPLEMENTATION", "COMPLETED"), na.rm = TRUE),
-    Total_Pledges = n()
+    `GRF Data on Pledges`          = "Total",
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
   )
 
-# Combine Data with Headers for Sections
-region_header <- tibble(`GFR Data on Pledges` = "Summary by Region", .rows = 1)
-entity_header <- tibble(`GFR Data on Pledges` = "Summary by Submitting Entity Type", .rows = 1)
+# Section headers
+source_header <- tibble(`GRF Data on Pledges` = "Source of Data", .rows = 1)
+region_header <- tibble(`GRF Data on Pledges` = "Summary by Region", .rows = 1)
+entity_header <- tibble(`GRF Data on Pledges` = "Summary by Submitting Entity Type", .rows = 1)
 
-# Rename labels and combine data
-region_summary <- region_summary %>%
-  rename(`GFR Data on Pledges` = `region`)
+# Build final table ----------------------------------------------------------------------------------------
 
-entity_summary <- entity_summary %>%
-  rename(`GFR Data on Pledges` = `Submitting.Entity.Type`)
-
-# Final merged table
 merged_summary <- bind_rows(
   total_row,
+  source_header,
+  source_summary,
   region_header,
   region_summary,
   entity_header,
   entity_summary
-)
-
-# Find the row index where "South America" appears
-south_america_index <- which(merged_summary$`GFR Data on Pledges` == "South America")
-
-# Create a blank row (same structure as the existing data)
-blank_row <- merged_summary[1, ]
-blank_row[,] <- NA  # Set all values to NA or "" as needed
-
-# Insert the blank row after "South America"
-merged_summary <- bind_rows(
-  merged_summary[1:south_america_index, ],
-  blank_row,
-  merged_summary[(south_america_index + 1):nrow(merged_summary), ]
 ) %>%
-  rename('Total Pledges' = Total_Pledges)
+  rename(`Total Pledges` = Total_Pledges)
 
-# Styling Variables
-egriss_color <- "#003366"  # EGRISS dark blue
+# Styling constants
+egriss_color         <- "#003366"
 section_header_color <- "#D9D9D9"
 
-# Create FlexTable with Styling
+# Create and style flextable -----------------------------------------------------------------------------
+
 ar.5.1 <- flextable(merged_summary) %>%
   theme_vanilla() %>%
   fontsize(size = 10, part = "all") %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
-  border_outer(border = fp_border(color = "black", width = 2)) %>%  # Outer Border for Entire Table
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
-  border(i = 1, border.bottom = fp_border(color = "black", width = 2), part = "body") %>%
   autofit() %>%
-  set_table_properties(layout = "autofit", width = 0.6) %>%  # New Table Sizing Control
-  bold(i = 1, part = "body") %>%  # Bold Total Row
-  bg(i = 1, bg = egriss_color, part = "body") %>%  # Total Row in EGRISS Color
-  color(i = 1, color = "white", part = "body") %>%  # Text color for Total row
-  bg(i = 2, bg = section_header_color, part = "body") %>%  # Region Section Header
-  bg(i = nrow(region_summary) + 4, bg = section_header_color, part = "body") %>%  # Entity Section Header
+  set_table_properties(layout = "autofit", width = 0.6) %>%
+  # Style total row
+  bold(i = 1, part = "body") %>%
+  bg(i = 1, bg = egriss_color, part = "body") %>%
+  color(i = 1, color = "white", part = "body") %>%
+  # Style source header row only
+  bg(i = ~ `GRF Data on Pledges` == "Source of Data", bg = section_header_color, part = "body") %>%
+  # Optional: bold the section header text
+  bold(i = ~ `GRF Data on Pledges` %in% c("Source of Data","Summary by Region","Summary by Submitting Entity Type"), part = "body") %>%
+  # Footer
   add_footer_row(
     values = paste0(
       "Footnote: Data is based on GAIN Survey 2024 analysis of Statistical Inclusion Pledges. ",
-      "The merged table presents the breakdown by Region and Submitting Entity Type. ",
-      "Regions labeled 'Region/Country not Reported' represent cases where no geographic location or entity was specified."
+      "The merged table presents the breakdown by data source, region, and submitting entity type."
     ),
-    colwidths = ncol(merged_summary)  # Ensure footer spans the full table width
+    colwidths = ncol(merged_summary)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.5.1: GFR Data on Pledges Implementation, by stage, region, and entity type (Not in AR)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.5.1: GRF Data on Pledges Implementation, by source, stage, region, and entity type",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10
+        )
       )
     )
   )
-)
-# Display Table
+
+# Display the table
 print(ar.5.1)
