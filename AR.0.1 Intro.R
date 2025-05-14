@@ -2,7 +2,7 @@
 # Set Working Directory Dynamically
 # ======================================================
 # Copy-Paste your Windows file path (with backslashes)
-working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-05-02_12-48-29"
+working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_Legacy"
 
 # Automatically replace backslashes (\) with forward slashes (/)
 working_dir <- gsub("\\\\", "/", working_dir)
