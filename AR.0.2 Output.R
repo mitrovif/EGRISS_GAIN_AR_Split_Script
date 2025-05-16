@@ -188,6 +188,9 @@ word_doc <- word_doc %>%
   body_add_flextable(ar.7.1) %>%
   body_add_break() %>%
   body_end_section_landscape() %>%
+  # ar.8
+  body_add_flextable(ar.8.1) %>% body_add_break() %>%
+  body_add_flextable(ar.8.2) %>% body_add_break() %>%
   # map
   body_add_par("Map of Examples (2024)", style = "Image Caption") %>%
   body_add_img(src = "final_combined_maps.png", width = 5.5, height = 7.5) %>%

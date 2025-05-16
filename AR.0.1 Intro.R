@@ -94,9 +94,9 @@ source(file.path(scripts_dir, "AR.6.1 Activities.R"))
 source(file.path(scripts_dir, "AR.6.2 Activities.R"))
 source(file.path(scripts_dir, "AR.6.3 Activities.R"))
 source(file.path(scripts_dir, "AR.7.1 Duration.R"))
-source(file.path(scripts_dir, "AR.8.1 Map.R"))
 source(file.path(scripts_dir, "AR.8.1 Workstream.R"))
-
+source(file.path(scripts_dir, "AR.8.2 Workstream.R"))
+source(file.path(scripts_dir, "AR.8.1 Map.R"))
 # Final Output Script
 source(file.path(scripts_dir, "AR.0.2 Output.R"))
 
