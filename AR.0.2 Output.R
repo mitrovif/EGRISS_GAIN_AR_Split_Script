@@ -120,7 +120,7 @@ list_items <- c(
   "",
   "EGRISS Visibility (AR.6):",
   "    AR.6.1: Interest in learning more about EGRISS membership, by country and year (Not in AR)",
-  "    AR.6.2: Overview of Respondents Facing Challenges and Types of Challenges Identified, by year (Not in AR)",
+  "    AR.6.2: Publications Seen/Received for Example Implementation (Not in AR)",
   "    AR.6.3: Overview of Respondents Using Publications and Impact of Publications (Not in AR)",
   "",
   "Example Updates and Length (AR.7):",
