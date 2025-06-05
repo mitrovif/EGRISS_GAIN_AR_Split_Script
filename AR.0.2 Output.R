@@ -96,7 +96,7 @@ list_items <- c(
   "    AR.1.1: Trend of Country and Institutional-led Implementation Example, by year (Figure 4, AR pg. 24)",
   "    AR.1.2: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024 (Figure 5, AR pg.25)",
   "    AR.1.3: Overview of the Mixed Implementation of the IRRS, IRIS and IROSS, by year (AR pg.24)",
-  "    AR.1.4: Count of unique countries with country-led implementation examples, by distinct countries and year (Not in AR)",
+  "    AR.1.4: Count of Country-Led Implementation Examples, by Continents/Regions and Year (Not in AR)",
   "    AR.1.5: List of countries with country-led implementation using recommendations by region (Not in AR)",
   "",
   "Country-led GAIN Data (AR.2):",
