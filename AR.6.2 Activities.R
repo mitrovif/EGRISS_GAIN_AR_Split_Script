@@ -26,8 +26,8 @@ seen_egriss <- main_roster %>%
   filter(year %in% c(2023, 2024)) %>%
   select(year, ACT03) %>%
   mutate(Response = case_when(
-    ACT03 %in% c("2", "NO") ~ "Publications Seen/Received",
-    ACT03 %in% c("1", "YES") ~ "No Publications Seen/Received",
+    ACT03 %in% c("2", "NO") ~ "No Publications Seen/Received",
+    ACT03 %in% c("1", "YES") ~ "Publications Seen/Received",
     ACT03 %in% c("9", "NO RESPONSE", "8", "DON'T KNOW") ~ "No Response or Don't Know",
     is.na(ACT03) ~ "No Response or Don't Know",
     TRUE ~ as.character(ACT03)
