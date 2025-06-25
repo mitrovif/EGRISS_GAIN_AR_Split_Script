@@ -26,8 +26,8 @@ used_publications <- main_roster %>%
   filter(year == 2024) %>%
   select(year, ACT05) %>%
   mutate(Response = case_when(
-    ACT05 %in% c("2", "NO") ~ "Publications Impacted",
-    ACT05 %in% c("1", "YES") ~ "Publications Not Impacted",
+    ACT05 %in% c("2", "NO") ~ "Publications Not Impacted",
+    ACT05 %in% c("1", "YES") ~ "Publications Impacted",
     ACT05 %in% c("9", "NO RESPONSE", "8", "DON'T KNOW") ~ "No Response or Don't Know about Impact",
     is.na(ACT05) ~ "No Response or Don't Know about Impact",
     TRUE ~ as.character(ACT05)
