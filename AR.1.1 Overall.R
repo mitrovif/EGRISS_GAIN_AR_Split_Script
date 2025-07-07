@@ -17,8 +17,8 @@ summary_table <- summary_table %>%
 summary_table <- summary_table %>%
   mutate(
     `Example Lead/Placement` = case_when(
-      g_conled == 1 ~ "Nationally Led Examples",
-      g_conled == 2 ~ "Institutionally Led Examples",
+      g_conled == 1 ~ "Country-Led Examples",
+      g_conled == 2 ~ "Institutional Examples",
       g_conled == 3 ~ "CSO Led Examples",
       g_conled == 8 ~ "Unknown",
       TRUE ~ ""
@@ -40,25 +40,25 @@ numeric_cols <- summary_table %>%  select(where(is.numeric)) %>%names()
 overall_country_led_using_recs <- summary_table %>%
   filter(g_conled == 1 & PRO09 == 1) %>%
   summarise(across(all_of(numeric_cols), sum, na.rm = TRUE)) %>%
-  mutate(`Example Lead/Placement` = "Graph Data", `Use of Recommendations` = "Overall Country-led Example Using Recommendations")
+  mutate(`Example Lead/Placement` = "Figure Data: Overall Examples", `Use of Recommendations` = "Overall Country-led Examples Using Recommendations")
 
 # Overall Country-led Example (Now including NA values in PRO09)
 overall_country_led <- summary_table %>%
   filter(g_conled == 1 & (PRO09 %in% c(1, 2, 8) | is.na(PRO09))) %>%  # Include NA
   summarise(across(all_of(numeric_cols), sum, na.rm = TRUE)) %>%
-  mutate(`Example Lead/Placement` = "Graph Data", `Use of Recommendations` = "Overall Country-led Example")
+  mutate(`Example Lead/Placement` = "Figure Data: Overall Examples", `Use of Recommendations` = "Overall Country-led Examples")
 
 # Overall Institution Example (Including NA values in PRO09)
 overall_institution_example <- summary_table %>%
   filter(g_conled %in% c(2, 3) & (PRO09 %in% c(1, 2, 8) | is.na(PRO09))) %>%  # Include NA
   summarise(across(all_of(numeric_cols), sum, na.rm = TRUE)) %>%
-  mutate(`Example Lead/Placement` = "Graph Data", `Use of Recommendations` = "Overall Institution Example")
+  mutate(`Example Lead/Placement` = "Figure Data: Overall Examples", `Use of Recommendations` = "Overall Institutional Examples")
 
 # Institution Example Using Recommendations
 institution_example_using_recs <- summary_table %>%
   filter(g_conled %in% c(2, 3, 8) & PRO09 == 1) %>%
   summarise(across(all_of(numeric_cols), sum, na.rm = TRUE)) %>%
-  mutate(`Example Lead/Placement` = "Graph Data", `Use of Recommendations` = "Institution Example Using Recommendations")
+  mutate(`Example Lead/Placement` = "Figure Data: Overall Examples", `Use of Recommendations` = "Institutional Examples Using Recommendations")
 
 # Combine Graph Data Into a Separate Table
 graph_data_table <- bind_rows(
@@ -74,7 +74,7 @@ graph_data_table$`Example Lead/Placement` <- ifelse(duplicated(graph_data_table$
 # Reorder columns to keep "Example Lead/Placement" and "Use of Recommendations" first
 graph_data_table <- graph_data_table %>%
   select(`Example Lead/Placement`, `Use of Recommendations`, everything())
-
+  
 summary_table <- summary_table %>%
   select(`Example Lead/Placement`, `Use of Recommendations`, everything())
 
@@ -121,7 +121,8 @@ summary_table <- summary_table %>%
 # Merge Graph Data Table and Summary Table
 merged_df <- bind_rows(graph_data_table, summary_table) %>%
   mutate(`Example Lead/Placement` = na_if(trimws(`Example Lead/Placement`), "")) %>%  # convert "" or " " to NA
-  fill(`Example Lead/Placement`, .direction = "down")
+  fill(`Example Lead/Placement`, .direction = "down") %>%
+  mutate(Total = rowSums(across(c("2021", "2022", "2023", "2024")), na.rm = TRUE))
 
 # Define Colors
 primary_color <- "#4cc3c9"  # Light blue
@@ -149,34 +150,32 @@ ar.1.1 <- flextable(merged_df) %>%
   merge_v(j = ~ `Example Lead/Placement`) %>%
   add_footer_row(
     values = paste0(
-      "Footnote: This data supports Figure 4 in the 2024 Annual Report. ",
-      "It tracks national and institutional examples of EGRISS recommendation use. ",
-      "Definitions: ",
-      " Nationally Led: Country-led data collection initiatives. ",
-      " Institutionally Led: Data collection led by international organizations without explicit country leadership. ",
-      " CSO-Led or Other: Data collection by civil society organizations or other entities. ",
-      " PRO09: Identifies if EGRISS recommendations were used in data collection efforts. "
+      "Table AR.1.1 supports Figure 4 in the 2024 Annual Report. In addition to Figure 4 data, disaggregated examples by example lead (country-led or institution-led, both international or CSO), respondents use of EGRISS recommendations and year of reporting in GAIN."
     ),
     colwidths = ncol(merged_df) - 2
   ) %>%
   fontsize(size = 7, part = "footer") %>%
+  bg(bg = "#f4cccc", j = ~ `2024`) %>%
+  bg(bg = "#c9daf8", j = ~ Total) %>%
   ## <-- styled caption as a formatted paragraph: 
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.1.1: Trend of Country and Institutional-led Implementation Example, by year (Figure 4, AR pg. 24)",
+        "Table AR.1.1: Trend of Country-Led and Institution Led Implementation Example, by year (Figure 4, AR pg. 24)",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
+          bold = TRUE,
           italic      = FALSE
         )
       )
     )
   )%>%
-set_table_properties(
-  width = 1,           # 100% of page width
-  layout = "autofit"   # auto‐adjust column widths
-) %>%
+  set_table_properties(
+    width = 1,           # 100% of page width
+    layout = "autofit"   # auto‐adjust column widths
+  ) %>%
   fix_border_issues()
+
 # Display Merged Table
 ar.1.1
