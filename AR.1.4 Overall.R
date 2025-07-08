@@ -1,3 +1,4 @@
+
 # ============================================================================================================
 # AR.1.4: Unique Country Count for Use of Recommendations by Leadership Type
 # ============================================================================================================
@@ -26,8 +27,8 @@ calculate_unique_country_count <- function(group_roster, leadership_type) {
   
   df <- df %>%
     mutate(Total = rowSums(across(c("2021", "2022", "2023", "2024")), na.rm = TRUE)) %>%
-    mutate(`Leadership` = if_else(leadership_type == 1, "Nationally Led Examples", "Institutionally Led Examples")) %>%
-    relocate(`Leadership`, .before = everything())
+    mutate(`Example Lead` = if_else(leadership_type == 1, "Country-Led Examples", "Institutional Examples")) %>%
+    relocate(`Example Lead`, .before = everything())
   
   return(df)
 }
@@ -70,8 +71,8 @@ for (year in c("2021", "2022", "2023", "2024")) {
 
 total_unique_summary <- total_unique_summary %>%
   mutate(Total = rowSums(across(c("2021", "2022", "2023", "2024")), na.rm = TRUE)) %>%
-  mutate(`Leadership` = "Total") %>%
-  relocate(`Leadership`, .before = everything())
+  mutate(`Example Lead` = "Total") %>%
+  relocate(`Example Lead`, .before = everything())
 
 # Final table with combined counts and summary
 final_unique_country_table <- bind_rows(combined_unique_country_count, total_unique_summary)
@@ -81,10 +82,6 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
   
-  # Highlight Total Row in Dark Blue
-  bg(i = nrow(final_unique_country_table), bg = secondary_color) %>%
-  color(i = nrow(final_unique_country_table), color = "white") %>%
-  
   # Highlight Header Row in Light Blue
   bg(part = "header", bg = primary_color) %>%
   color(part = "header", color = "black") %>%
@@ -93,7 +90,11 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   bg(bg = "#f4cccc", j = ~ `2024`) %>%
   bg(bg = "#c9daf8", j = ~ Total) %>%
   
-  merge_v(j = ~ `Leadership`) %>%
+  # Highlight Total Row in Dark Blue
+  bg(i = nrow(final_unique_country_table), bg = secondary_color) %>%
+  color(i = nrow(final_unique_country_table), color = "white") %>%
+  
+  merge_v(j = ~ `Example Lead`) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(border = fp_border(color = "gray", width = 0.5)) %>%
   
@@ -120,18 +121,20 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   fontsize(size = 7, part = "footer") %>%
   
   # Updated Caption
-set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.1.4: Count of Country-Led Implementation Examples, by Continents/Regions and Year (Not in AR)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "Table AR.1.4: Count of Country-Led Implementation Examples, by Continents/Regions and Year (Not in AR)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE,
+          bold = TRUE
+        )
       )
     )
-  )
-)%>%
+  )%>%
   fix_border_issues()
+
 # Display Table
 ar.1.4
