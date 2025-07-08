@@ -38,8 +38,8 @@ recuse_table <- group_roster %>%
   summarise(Count = n(), .groups = "drop") %>%
   mutate(
     `Example Lead` = case_when(
-      g_conled == 1 ~ "Nationally Led Examples",
-      g_conled == 2 ~ "Institutionally Led Examples",
+      g_conled == 1 ~ "Country-Led Examples",
+      g_conled == 2 ~ "Institutional Examples",
       g_conled == 3 ~ "CSO Led Examples",
       g_conled == 8 ~ "Unknown",
       TRUE ~ ""
@@ -47,22 +47,19 @@ recuse_table <- group_roster %>%
   ) %>%
   pivot_wider(names_from = ryear, values_from = Count, values_fill = 0) %>%
   mutate(Total = rowSums(across(`2021`:`2024`), na.rm = TRUE)) %>%
-  select(`Example Lead`, `Use of Recommendations by Leads` = g_recuse, `2021`, `2022`, `2023`, `2024`, Total)
+  select(`Example Lead`, `Use of Recommendations` = g_recuse, `2021`, `2022`, `2023`, `2024`, Total)
 
 # Ensure year columns are numeric
 recuse_table <- recuse_table %>%
   mutate(across(`2021`:`2024`, as.numeric),
          Total = rowSums(across(`2021`:`2024`), na.rm = TRUE))
 
-# Remove duplicated Example Lead labels
-# recuse_table$`Example Lead` <- ifelse(duplicated(recuse_table$`Example Lead`), "", recuse_table$`Example Lead`)
-
 # Add aggregated rows for IRRS, IRIS, IROSS, Mixed, and Undetermined
 aggregated_rows <- recuse_table %>%
-  group_by(`Use of Recommendations by Leads`) %>%
+  group_by(`Use of Recommendations`) %>%
   summarise(across(`2021`:`Total`, sum, na.rm = TRUE), .groups = "drop") %>%
-  mutate(`Example Lead` = "Graph Data") %>%
-  select(`Example Lead`, `Use of Recommendations by Leads`, everything())
+  mutate(`Example Lead` = "Figure Data: Overall Examples") %>%
+  select(`Example Lead`, `Use of Recommendations`, everything())
 
 # Insert aggregated rows at the top
 recuse_table <- bind_rows(aggregated_rows, recuse_table)
@@ -89,34 +86,31 @@ ar.1.2 <- flextable(recuse_table) %>%
   fontsize(size = 10, part = "body") %>%
   merge_v(j = ~ `Example Lead`) %>%
   color(i = 2:5, color = "white", part = "body") %>%  # White text for first five rows
-  # color(i = 1, j = "Example Lead", color = "black", part = "body") %>%
+  color(i = 4, color = "black", part = "body") %>%
+  color(j = 6:7, color = "black", part = "body") %>%
+  bg(bg = "#f4cccc", j = ~ `2024`) %>%
+  bg(bg = "#c9daf8", j = ~ Total) %>%
   add_footer_row(
     values = paste0(
-      "Footnote: Graph Data is based on the implementation of the IRRS, IRIS, and IROSS in 2024. ",
-      "Nationally led and institutionally led examples have been categorized into distinct recommendation types (IRRS, IRIS, IROSS, Mixed, Undetermined). ",
-      "• IRRS: Cases where only IRRS recommendations were used. ",
-      "• IRIS: Cases where only IRIS recommendations were used. ",
-      "• IROSS: Cases where only IROSS recommendations were used. ",
-      "• Mixed: Cases where more than one recommendation type was used. ",
-      "• Undetermined: Cases where respondents were unsure of which recommendations were used or did not report their use. "
+      "Table AR.1.2 supports Figure 5 in the 2024 Annual Report. In addition to Figure 5 data, examples are disaggregated by lead (country-led or institution led, both international or CSO) and by year of reporting in GAIN."
     ),
     colwidths = ncol(recuse_table)  # Ensure footer spans the full table width dynamically
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.1.2: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024 (Figure 5, AR pg.25)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "Table AR.1.2: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024 (Figure 5, AR pg.25)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE,
+          bold = TRUE
+        )
       )
     )
-  )
-)%>%  # Add caption 
+  )%>%  # Add caption 
   fix_border_issues()
-  
-# Display Merged Table
 
+# Display Merged Table
 ar.1.2
