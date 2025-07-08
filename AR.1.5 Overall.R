@@ -17,8 +17,11 @@ list_countries_by_region <- function(group_roster) {
   return(df)
 }
 
+countries_by_region <- list_countries_by_region(group_roster) %>%
+  relocate(`Other`, .after = everything())
+
 # List of Countries by Region
-ar.1.5 <- flextable(list_countries_by_region(group_roster)) %>%
+ar.1.5 <- flextable(countries_by_region) %>%
   delete_columns(j = "ryear") %>%
   set_table_properties(width = 0.5, layout = "autofit") %>%
   theme_booktabs() %>%
@@ -34,18 +37,19 @@ ar.1.5 <- flextable(list_countries_by_region(group_roster)) %>%
   add_footer_row(values = "Footnote: This table presents the list of countries for each region based on metadata information.",
                  colwidths = ncol(list_countries_by_region(group_roster)) - 1) %>%  # Adjust colwidths due to the column deletion
   fontsize(size = 7, part = "footer") %>%
- set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.1.5: List of countries with country-led implementation using recommendations by region (Not in AR)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "AR.1.5: List of countries with country-led implementation using recommendations by region (Not in AR)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
       )
     )
-  )
-)%>%
+  )%>%
   fix_border_issues()
+
 # Display Second Table
 ar.1.5
