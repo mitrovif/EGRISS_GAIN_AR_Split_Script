@@ -108,13 +108,7 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   # Add Metadata Summary in Footnote
   add_footer_row(
     values = paste0(
-      "Footnote: This data supports Figure 4 in the 2024 Annual Report. ",
-      "It tracks national and institutional examples of EGRISS recommendation use. ",
-      "Definitions: ",
-      "• Nationally Led: Country-led data collection initiatives. ",
-      "• Institutionally Led: Data collection led by international organizations without explicit country leadership. ",
-      "• CSO-Led or Other: Data collection by civil society organizations or other entities. ",
-      "• PRO09: Identifies if EGRISS recommendations were used in data collection efforts. "
+      "Table AR.1.4 is not in the 2024 Annual Report. Table is disaggregated by example lead (country-led or institution-led, both international or CSO), by region, and by year."
     ),
     colwidths = ncol(final_unique_country_table)
   ) %>%
