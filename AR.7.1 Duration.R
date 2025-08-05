@@ -42,7 +42,7 @@ group_roster <- group_roster %>%
       example_duration %in% c(2, 3) ~ "2 up to 3 years to finish",
       example_duration %in% c(4, 5) ~ "4 up to 5 years to finish",
       example_duration >= 6 ~ "More than 5 years to finish",
-      TRUE ~ "Other"  # fallback just in case
+      TRUE ~ "Other**"  # fallback just in case
     )
   )
 
@@ -71,11 +71,11 @@ group_roster <- group_roster %>%
     example_duration_category = case_when(
       is.na(example_duration) ~ "Undetermined",
       example_duration == 99 ~ "No end planned",
-      example_duration %in% c(0, 1) ~ "Up to 1 year to finish",
-      example_duration %in% c(2, 3) ~ "2 up to 3 years to finish",
-      example_duration %in% c(4, 5) ~ "4 up to 5 years to finish",
+      example_duration %in% c(0, 1) ~ "Less than 1 year to finish",
+      example_duration %in% c(2, 3) ~ "More than 1 year and up to 3 years to finish",
+      example_duration %in% c(4, 5) ~ "More than 3 years and up to 5 years to finish",
       example_duration >= 6 ~ "More than 5 years to finish",
-      TRUE ~ "Other"
+      TRUE ~ "Other**"
     )
   )
 aggregated_national <- group_roster %>%
@@ -93,13 +93,13 @@ aggregated_national <- group_roster %>%
       grepl("PRO08.B", Source_Variable) ~ "Administrative Data",
       grepl("PRO08.C", Source_Variable) ~ "Census",
       grepl("PRO08.D", Source_Variable) ~ "Data Integration",
-      grepl("PRO08.E|PRO08.F|PRO08.G|PRO08.H|PRO08.X", Source_Variable) ~ "Other",
+      grepl("PRO08.E|PRO08.F|PRO08.G|PRO08.H|PRO08.X", Source_Variable) ~ "Other**",
       TRUE ~ "Unknown"
     ),
     `Use of Recommendations` = case_when(
       PRO09 == 1 ~ "Using Recommendations",
-      PRO09 %in% c(2, 8) ~ "Not Using Recommendations and Other",
-      TRUE ~ "Not Using Recommendations and Other"
+      PRO09 %in% c(2, 8) ~ "Not Using Recommendations and Other*",
+      TRUE ~ "Not Using Recommendations and Other*"
     )
   ) %>%
   group_by(`Use of Recommendations`, Source, example_duration_category) %>%
@@ -110,7 +110,7 @@ aggregated_national <- group_roster %>%
     values_fill = 0
   ) %>%
   mutate(Total = rowSums(select(., -c(`Use of Recommendations`, Source)), na.rm = TRUE)) %>%
-  mutate(`Example Category` = "Graph Data National Examples")
+  mutate(`Example Category` = "Country-Led Examples")
 
 # Step 2: Institutional Examples (g_conled == 2 or 3)
 aggregated_institutional <- group_roster %>%
@@ -128,13 +128,13 @@ aggregated_institutional <- group_roster %>%
       grepl("PRO08.B", Source_Variable) ~ "Administrative Data",
       grepl("PRO08.C", Source_Variable) ~ "Census",
       grepl("PRO08.D", Source_Variable) ~ "Data Integration",
-      grepl("PRO08.E|PRO08.F|PRO08.G|PRO08.H|PRO08.X", Source_Variable) ~ "Other",
+      grepl("PRO08.E|PRO08.F|PRO08.G|PRO08.H|PRO08.X", Source_Variable) ~ "Other**",
       TRUE ~ "Unknown"
     ),
     `Use of Recommendations` = case_when(
       PRO09 == 1 ~ "Using Recommendations",
-      PRO09 %in% c(2, 8) ~ "Not Using Recommendations and Other",
-      TRUE ~ "Not Using Recommendations and Other"
+      PRO09 %in% c(2, 8) ~ "Not Using Recommendations and Other*",
+      TRUE ~ "Not Using Recommendations and Other*"
     )
   ) %>%
   group_by(`Use of Recommendations`, Source, example_duration_category) %>%
@@ -145,20 +145,20 @@ aggregated_institutional <- group_roster %>%
     values_fill = 0
   ) %>%
   mutate(Total = rowSums(select(., -c(`Use of Recommendations`, Source)), na.rm = TRUE)) %>%
-  mutate(`Example Category` = "Overall Institution Examples")
+  mutate(`Example Category` = "Institutional-Led Examples")
 
 # after your bind_rows(...) and arrange(...) step, insert:
 aggregated_data <- bind_rows(aggregated_national, aggregated_institutional) %>%
   mutate(
     `Use of Recommendations` = factor(
       `Use of Recommendations`,
-      levels = c("Using Recommendations", "Not Using Recommendations and Other")
+      levels = c("Using Recommendations", "Not Using Recommendations and Other*")
     )
   ) %>%
   arrange(
     `Example Category`,
     `Use of Recommendations`,
-    factor(Source, levels = c("Survey", "Census", "Administrative Data", "Data Integration", "Other"))
+    factor(Source, levels = c("Survey", "Census", "Administrative Data", "Data Integration", "Other**"))
   ) %>%
   # ← ensure Example Category is first
   select(`Example Category`, everything())
@@ -170,30 +170,19 @@ ar.7.1 <- flextable(aggregated_data) %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   merge_v(j = ~ `Example Category`) %>%
   merge_v(j = ~ `Use of Recommendations`) %>%
-  bg(bg = "#f4cccc", j = ~ Total) %>%
+  bg(bg = "#C9DAF8", j = ~ Total) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(border = fp_border(color = "gray", width = 0.5)) %>%
   fontsize(size = 8) %>%
   autofit() %>%
-  # highlight rows as before…
-  border(i = which(aggregated_data$`Example Category` == "Graph Data National Examples" &
-                     aggregated_data$`Use of Recommendations` == "Using Recommendations"),
-         border.top = solid_border, border.bottom = solid_border) %>%
-  border(i = which(aggregated_data$`Example Category` == "Graph Data National Examples" &
-                     aggregated_data$`Use of Recommendations` == "Not Using Recommendations and Other"),
-         border.top = dashed_border, border.bottom = dashed_border) %>%
-  border(i = which(aggregated_data$`Example Category` == "Overall Institution Examples"),
-         border.top = default_border, border.bottom = default_border) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   
   # ← new detailed footnote
   add_footer_row(
     values = paste0(
-      "Footnote: “Example Category” distinguishes nationally-led vs institutionally-led examples. ",
-      "“Use of Recommendations” is PRO09==1 (Using) vs PRO09==2,8 (Not Using/Other). ",
-      "“Source” derives from PRO08.* flags (Survey, Census, Administrative Data, Data Integration, Other). ",
-      "“Example Duration Category” bins years between PRO04_year and PRO05_year (NA→Undetermined, 9998/9999→No end planned, ",
-      "0–1 yrs, 2–3 yrs, 4–5 yrs, >5 yrs). Counts are number of examples per combination."
+      "Table 2.9 is not featured in the 2024 Annual Report. Table is disaggregated by example sources (respondents to GAIN survey answered a multiple-choice question) and implementation length. Table is disaggregated for 2024 only. ",
+      "*Other in Not Using EGRISS Recommendations include: Don't Know and Not Reported ",
+      "** Other in sources include: Non-Traditional, Strategy, Guidance/Toolkit, Workshop/Training and Other "
     ),
     colwidths = ncol(aggregated_data)
   ) %>%
@@ -204,7 +193,7 @@ ar.7.1 <- flextable(aggregated_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.7.1: Length of implementation by use of recommendations and example type (Not in AR)",
+        "Table 2.9: Length of example implementation",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
@@ -218,5 +207,6 @@ ar.7.1 <- flextable(aggregated_data) %>%
     layout = "autofit"   # auto‐adjust column widths
   ) %>%
   fix_border_issues()
+
 # then view
 ar.7.1
