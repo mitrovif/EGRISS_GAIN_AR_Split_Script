@@ -21,7 +21,7 @@ response_labels <- c(
 )
 
 pro19_summary <- group_roster %>%
-  filter(ryear %in% c(2023, 2024), g_conled == 1, PRO09 == 1) %>%
+  filter(ryear %in% c(2023, 2024), g_conled == 1) %>%
   select(ryear, PRO19) %>%
   mutate(Response = case_when(
     PRO19 == 2 | PRO19 == "NO" ~ "No challenges faced",
@@ -56,7 +56,7 @@ challenge_labels <- c(
 )
 
 challenges_data <- group_roster %>%
-  filter(ryear %in% c(2023, 2024), g_conled == 1, PRO09 == 1) %>%
+  filter(ryear %in% c(2023, 2024), g_conled == 1) %>%
   select(ryear, starts_with("PRO20.")) %>%
   pivot_longer(cols = starts_with("PRO20."), names_to = "Challenge", values_to = "Reported") %>%
   filter(Reported == 1) %>%
@@ -105,16 +105,17 @@ ar.2.4 <- flextable(combined_data) %>%
   ) %>%
   fontsize(size = 7, part = "footer") %>%
   set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.2.4: Overview of Respondents Facing Challenges and Types of Challenges Identified (Figure 8, AR pg.28)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+    caption = as_paragraph(
+      as_chunk(
+        "AR.2.4: Overview of Respondents Facing Challenges and Types of Challenges Identified (Figure 8, AR pg.28)",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
       )
     )
-  )
-)%>%
+  )%>%
   fix_border_issues()
+
 print(ar.2.4)
