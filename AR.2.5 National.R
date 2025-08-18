@@ -8,6 +8,34 @@ library(stringr)
 library(tidyr)
 library(flextable)
 
+response_labels <- c(
+  "Challenges faced" = "Challenges faced",
+  "No challenges faced" = "No challenges faced",
+  "No Response on Challenges or Don't Know" = "No Response on Challenges or Don't Know"
+)
+
+pro21_summary <- group_roster %>%
+  filter(ryear %in% c(2023, 2024), g_conled == 1) %>%
+  select(ryear, PRO21) %>%
+  mutate(`Implementation Challenge` = case_when(
+    PRO21 == 2 | PRO21 == "NO" ~ "No challenges faced",
+    PRO21 == 1 | PRO21 == "YES" ~ "Challenges faced",
+    PRO21 == 9 | PRO21 == "NO RESPONSE" ~ "No Response on Challenges or Don't Know",
+    PRO21 == 8 | PRO21 == "DON'T KNOW" ~ "No Response on Challenges or Don't Know",
+    is.na(PRO21) ~ "No Response on Challenges or Don't Know",
+    TRUE ~ as.character(PRO21)
+  )) %>%
+  mutate(`Implementation Challenge` = recode(`Implementation Challenge`, !!!response_labels)) %>%
+  group_by(`Implementation Challenge`, ryear) %>%
+  summarize(Count = n(), .groups = 'drop') %>%
+  complete(`Implementation Challenge` = names(response_labels), ryear = c(2023, 2024), fill = list(Count = 0)) %>%
+  pivot_wider(names_from = ryear, values_from = Count)
+
+pro21_summary <- pro21_summary %>%
+  mutate(across(c(`2023`, `2024`), as.character)) %>%
+  mutate(`Example Lead` = "Overall") %>%
+  relocate(`Example Lead`)
+
 # Helper: Map raw categories to descriptive labels
 map_challenge <- function(df) {
   df %>%
@@ -98,21 +126,63 @@ final_pro22 <- bind_rows(overall_df, national_df, institution_df) %>%
 final_wide <- final_pro22 %>%
   pivot_wider(
     names_from = year,
-    values_from = Responses,
-    names_prefix = "Responses "
+    values_from = Responses
   ) %>%
   mutate(across(starts_with("Responses "), ~ replace_na(.x, 0))) %>%
-  arrange(`Example Lead`, `Implementation Challenge`)
+  arrange(`Example Lead`, `Implementation Challenge`) %>%
+  mutate(across(c(`2023`, `2024`), as.character)) %>%
+  replace(is.na(.), "0")
+
+# Reorder 'Example Lead' as a factor with desired order
+final_wide <- final_wide %>%
+  mutate(`Example Lead` = factor(`Example Lead`,
+                                 levels = c("Overall", "Nationally Led Examples", "Institutionally Led Examples"))) %>%
+  arrange(`Example Lead`)
+
+
+# Combining Both Tables into One Stacked Table
+combined_data <- bind_rows(
+  tibble(`Example Lead` = "Count of Respondents Facing Challenges", `2023` = "", `2024` = ""),
+  pro21_summary,
+  tibble(`Example Lead` = "", `2023` = "", `2024` = ""),  # Spacer row
+  tibble(`Example Lead` = "Types of Challenges Identified", `2023` = "", `2024` = ""),
+  final_wide) %>%
+  relocate(`Example Lead`, `Implementation Challenge`) %>%
+  rename(`EGRISS Recommendations Implementation Challenges` = `Implementation Challenge`)
+
+combined_data <- bind_rows(
+  tibble(
+    `Example Lead` = "Count of Respondents Facing Challenges",
+    `2023` = "Count of Respondents Facing Challenges",
+    `2024` = "Count of Respondents Facing Challenges",
+    `Implementation Challenge` = "Count of Respondents Facing Challenges"
+  ),
+  pro21_summary,
+  tibble(`Example Lead` = "", `2023` = "", `2024` = ""),  # Spacer row
+  tibble(
+    `Example Lead` = "Types of Challenges Identified",
+    `2023` = "Types of Challenges Identified",
+    `2024` = "Types of Challenges Identified",
+    `Implementation Challenge` = "Types of Challenges Identified"
+  ),
+  final_wide) %>%
+  relocate(`Example Lead`, `Implementation Challenge`) %>%
+  rename(`EGRISS Recommendations Implementation Challenges` = `Implementation Challenge`)
+
 
 # Create FlexTable for Word
-ar.2.5 <- flextable(final_wide) %>%
+ar.2.5 <- flextable(combined_data) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   fontsize(size = 10, part = "all") %>%
   border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "all", border = fp_border(color = "gray", width = 0.5)) %>%
+  bg(i = 1, bg = "#D9D9D9") %>%
+  bg(i = 6, bg = "#D9D9D9") %>%
   merge_v(j = ~ `Example Lead`) %>%
+  merge_h(i = 1) %>%
+  merge_h(i = 6) %>%
   autofit() %>%
   add_footer_row(
     values = paste0(
