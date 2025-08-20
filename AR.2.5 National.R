@@ -183,6 +183,7 @@ ar.2.5 <- flextable(combined_data) %>%
   merge_v(j = ~ `Example Lead`) %>%
   merge_h(i = 1) %>%
   merge_h(i = 6) %>%
+  bold(i = c(1, 6), bold = TRUE, part = "body") %>%
   autofit() %>%
   add_footer_row(
     values = paste0(
