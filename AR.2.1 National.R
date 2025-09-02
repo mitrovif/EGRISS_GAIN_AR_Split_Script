@@ -24,6 +24,27 @@ regional_data_combined <- bind_rows(regional_data_using_recs, regional_data_over
   rename(Region = region) %>%
   select(`Example Category`, Region, everything())  # Ensure correct column order
 
+# Define your region mapping
+region_map <- c(
+  "Asia" = "Asia and Oceania",
+  "Oceania" = "Asia and Oceania",
+  "North America" = "Americas",
+  "South America" = "Americas"
+)
+
+# Apply the mapping and summarize
+regional_data_combined <- regional_data_combined %>%
+  mutate(Region = recode(Region, !!!region_map)) %>%
+  group_by(`Example Category`, Region) %>%
+  summarise(
+    `2021` = sum(`2021`, na.rm = TRUE),
+    `2022` = sum(`2022`, na.rm = TRUE),
+    `2023` = sum(`2023`, na.rm = TRUE),
+    `2024` = sum(`2024`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(Total = rowSums(select(., starts_with("20")))) # add total column
+
 # Define border styles
 highlight_border <- fp_border(color = "#3b71b3", width = 1.5)  # Blue for Graph Data section
 default_border <- fp_border(color = "black", width = 1)  # Default black border for Overall section
@@ -48,15 +69,15 @@ ar.2.1 <- flextable(regional_data_combined) %>%
   border(i = which(regional_data_combined$`Example Category` == "Graph Data: Country-led Example Using Recommendations"), 
          border.top = highlight_border, 
          border.bottom = highlight_border) %>% 
-         # border.left = highlight_border, 
-         # border.right = highlight_border) %>%
+  # border.left = highlight_border, 
+  # border.right = highlight_border) %>%
   
   # Apply black border styling for "Overall Country-led Example"
   border(i = which(regional_data_combined$`Example Category` == "Overall Country-led Example"), 
          border.top = fp_border(color = "gray", width = 0.5), 
          border.bottom = fp_border(color = "gray", width = 0.5)) %>% 
-         # border.left = fp_border(color = "gray", width = 0.5), 
-         # border.right = fp_border(color = "gray", width = 0.5)) %>%
+  # border.left = fp_border(color = "gray", width = 0.5), 
+  # border.right = fp_border(color = "gray", width = 0.5)) %>%
   
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   
