@@ -39,7 +39,7 @@ recuse_table <- group_roster %>%
   mutate(
     `Example Lead` = case_when(
       g_conled == 1 ~ "Country-Led Examples",
-      g_conled == 2 ~ "Institutional Examples",
+      g_conled == 2 ~ "Institution-Led Examples",
       g_conled == 3 ~ "CSO Led Examples",
       g_conled == 8 ~ "Unknown",
       TRUE ~ ""
@@ -54,11 +54,14 @@ recuse_table <- recuse_table %>%
   mutate(across(`2021`:`2024`, as.numeric),
          Total = rowSums(across(`2021`:`2024`), na.rm = TRUE))
 
+# Remove duplicated Example Lead labels
+# recuse_table$`Example Lead` <- ifelse(duplicated(recuse_table$`Example Lead`), "", recuse_table$`Example Lead`)
+
 # Add aggregated rows for IRRS, IRIS, IROSS, Mixed, and Undetermined
 aggregated_rows <- recuse_table %>%
   group_by(`Use of Recommendations`) %>%
   summarise(across(`2021`:`Total`, sum, na.rm = TRUE), .groups = "drop") %>%
-  mutate(`Example Lead` = "Figure Data: Overall Examples") %>%
+  mutate(`Example Lead` = "Overall Examples") %>%
   select(`Example Lead`, `Use of Recommendations`, everything())
 
 # Insert aggregated rows at the top
@@ -92,7 +95,7 @@ ar.1.2 <- flextable(recuse_table) %>%
   bg(bg = "#c9daf8", j = ~ Total) %>%
   add_footer_row(
     values = paste0(
-      "Table AR.1.2 supports Figure 5 in the 2024 Annual Report. In addition to Figure 5 data, examples are disaggregated by lead (country-led or institution led, both international or CSO) and by year of reporting in GAIN."
+      "Table 1.2 supports Figure 5 in the 2024 Annual Report (replicated above). In addition to Figure 5 data, examples are disaggregated by lead (country-led or institution-led examples, both international or CSO) and by year of reporting in GAIN."
     ),
     colwidths = ncol(recuse_table)  # Ensure footer spans the full table width dynamically
   ) %>%
@@ -100,7 +103,7 @@ ar.1.2 <- flextable(recuse_table) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "Table AR.1.2: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024 (Figure 5, AR pg.25)",
+        "Table 1.2 Breakdown of IRRS, IRIS and IROSS implementation examples in 2024",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
