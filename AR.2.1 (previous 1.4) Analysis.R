@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# AR.1.4: Unique Country Count for Use of Recommendations by Leadership Type
+# AR.2.1: Unique Country Count for Use of Recommendations by Leadership Type
 # ============================================================================================================
 
 # EGRISS Color Scheme
@@ -47,17 +47,39 @@ list_countries_by_region <- function(group_roster) {
   return(df)
 }
 
-# Calculate unique country counts for Nationally and Institutionally Led examples
-nationally_led_count <- calculate_unique_country_count(group_roster, 1)
-institutionally_led_count <- calculate_unique_country_count(group_roster, 2)
+# Calculate unique country counts for Country-Led examples
+nationally_led_count <- calculate_unique_country_count(group_roster, 1) %>%
+  rename(Region = region)
+# institutionally_led_count <- calculate_unique_country_count(group_roster, 2)
 
 # Combine both tables
-combined_unique_country_count <- bind_rows(nationally_led_count, institutionally_led_count) %>%
-  rename(Region = region)
+# combined_unique_country_count <- bind_rows(nationally_led_count, institutionally_led_count) %>%
+#   rename(Region = region)
+
+# Define your region mapping
+region_map <- c(
+  "Asia" = "Asia and Oceania",
+  "Oceania" = "Asia and Oceania",
+  "North America" = "Americas",
+  "South America" = "Americas"
+)
+
+# Apply the mapping and summarize
+nationally_led_count <- nationally_led_count %>%
+  mutate(Region = recode(Region, !!!region_map)) %>%
+  group_by(`Example Lead`, Region) %>%
+  summarise(
+    `2021` = sum(`2021`, na.rm = TRUE),
+    `2022` = sum(`2022`, na.rm = TRUE),
+    `2023` = sum(`2023`, na.rm = TRUE),
+    `2024` = sum(`2024`, na.rm = TRUE),
+    Total  = sum(Total, na.rm = TRUE),
+    .groups = "drop"
+  )
 
 # Add Total Row
 total_unique_summary <- group_roster %>%
-  filter(PRO09 == 1) %>%
+  filter(PRO09 == 1, g_conled == 1) %>%
   group_by(ryear) %>%
   summarise(unique_countries = n_distinct(mcountry), .groups = "drop") %>%
   pivot_wider(names_from = ryear, values_from = unique_countries, values_fill = 0)
@@ -75,10 +97,10 @@ total_unique_summary <- total_unique_summary %>%
   relocate(`Example Lead`, .before = everything())
 
 # Final table with combined counts and summary
-final_unique_country_table <- bind_rows(combined_unique_country_count, total_unique_summary)
+final_unique_country_table <- bind_rows(nationally_led_count, total_unique_summary)
 
 # Beautify and create FlexTable for Word
-ar.1.4 <- flextable(final_unique_country_table) %>%
+ar.2.1 <- flextable(final_unique_country_table) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
   
@@ -108,7 +130,7 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   # Add Metadata Summary in Footnote
   add_footer_row(
     values = paste0(
-      "Table AR.1.4 is not in the 2024 Annual Report. Table is disaggregated by example lead (country-led or institution-led, both international or CSO), by region, and by year."
+      "Table 2.1 is not in the 2024 Annual Report. The table is disaggregated by example lead (country-led or institution-led, both international or CSO), by region and by year."
     ),
     colwidths = ncol(final_unique_country_table)
   ) %>%
@@ -118,7 +140,7 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "Table AR.1.4: Count of Country-Led Implementation Examples, by Continents/Regions and Year (Not in AR)",
+        "Table 2.1: Count of countries reporting IRRS, IRIS and IROSS implementation examples, by region and year",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
@@ -131,4 +153,4 @@ ar.1.4 <- flextable(final_unique_country_table) %>%
   fix_border_issues()
 
 # Display Table
-ar.1.4
+ar.2.1
