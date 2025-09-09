@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# AR.2.1: Figure 6: Implementation of the Recommendations by Region (in new version of AR)
+# AR.2.2: Figure 6: Implementation of the Recommendations by Region (in new version of AR)
 # ============================================================================================================
 
 # Step 1: Extract Country-led Examples Using Recommendations
@@ -9,7 +9,7 @@ regional_data_using_recs <- group_roster %>%
   group_by(region, ryear) %>%
   summarise(count = n(), .groups = "drop") %>%
   pivot_wider(names_from = ryear, values_from = count, values_fill = 0) %>%
-  mutate(`Example Category` = "Graph Data: Country-led Example Using Recommendations")
+  mutate(`Example Lead` = "Country-Led Example Using EGRISS Recommendations")
 
 # Step 2: Extract Overall Country-led Examples (Including those without use of recommendations)
 regional_data_overall <- group_roster %>%
@@ -17,12 +17,12 @@ regional_data_overall <- group_roster %>%
   group_by(region, ryear) %>%
   summarise(count = n(), .groups = "drop") %>%
   pivot_wider(names_from = ryear, values_from = count, values_fill = 0) %>%
-  mutate(`Example Category` = "Overall Country-led Example")
+  mutate(`Example Lead` = "Overall Country-Led Examples")
 
 # Step 3: Combine both datasets
 regional_data_combined <- bind_rows(regional_data_using_recs, regional_data_overall) %>%
   rename(Region = region) %>%
-  select(`Example Category`, Region, everything())  # Ensure correct column order
+  select(`Example Lead`, Region, everything())  # Ensure correct column order
 
 # Define your region mapping
 region_map <- c(
@@ -35,7 +35,7 @@ region_map <- c(
 # Apply the mapping and summarize
 regional_data_combined <- regional_data_combined %>%
   mutate(Region = recode(Region, !!!region_map)) %>%
-  group_by(`Example Category`, Region) %>%
+  group_by(`Example Lead`, Region) %>%
   summarise(
     `2021` = sum(`2021`, na.rm = TRUE),
     `2022` = sum(`2022`, na.rm = TRUE),
@@ -52,12 +52,12 @@ header_color <- "#4cc3c9"  # Primary color for header row
 header_border <- fp_border(color = "black", width = 1)  # Black border for header
 
 # Step 4: Create FlexTable
-ar.2.1 <- flextable(regional_data_combined) %>%
+ar.2.2 <- flextable(regional_data_combined) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 10, part = "body") %>%  # Set font size 10 for body text
-  merge_v(j = ~ `Example Category`) %>%  # Merge vertical cells for "Example Category"
+  merge_v(j = ~ `Example Lead`) %>%  # Merge vertical cells for "Example Lead"
   autofit() %>%
   
   # Header Styling
@@ -65,15 +65,15 @@ ar.2.1 <- flextable(regional_data_combined) %>%
   color(part = "header", color = "black") %>%  # Black font in header for better contrast
   border(part = "header", border.top = header_border, border.bottom = header_border) %>%  # Header Border
   
-  # Apply blue border styling for "Graph Data: Country-led Example Using Recommendations"
-  border(i = which(regional_data_combined$`Example Category` == "Graph Data: Country-led Example Using Recommendations"), 
+  # Apply blue border styling for "Country-led Example Using EGRISS Recommendations"
+  border(i = which(regional_data_combined$`Example Lead` == "Country-Led Example Using EGRISS Recommendations"), 
          border.top = highlight_border, 
          border.bottom = highlight_border) %>% 
   # border.left = highlight_border, 
   # border.right = highlight_border) %>%
   
-  # Apply black border styling for "Overall Country-led Example"
-  border(i = which(regional_data_combined$`Example Category` == "Overall Country-led Example"), 
+  # Apply black border styling for "Overall Country-led Examples"
+  border(i = which(regional_data_combined$`Example Lead` == "Overall Country-Led Examples"), 
          border.top = fp_border(color = "gray", width = 0.5), 
          border.bottom = fp_border(color = "gray", width = 0.5)) %>% 
   # border.left = fp_border(color = "gray", width = 0.5), 
@@ -81,12 +81,14 @@ ar.2.1 <- flextable(regional_data_combined) %>%
   
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   
+  # Highlight Key Year Columns
+  bg(bg = "#f4cccc", j = ~ `2024`) %>%
+  bg(bg = "#c9daf8", j = ~ Total) %>%
+  
   # Footer details
   add_footer_row(
     values = paste0(
-      "Footnote: Graph Data: Country-led Example Using Recommendations refers to country-led projects that explicitly use EGRISS recommendations. ",
-      "This section highlights the regional distribution of cases where national statistical offices or institutions reported following EGRISS guidance. ",
-      "The data is collected based on responses to PRO09, indicating direct implementation of statistical recommendations in forced displacement data collection efforts."
+      "Table 2.2 supports Figure 6 in the 2024 Annual Report (replicated above). In addition to Figure 6 data on country-led examples using the EGRISS Recommendations, it shows overall country-led examples irrespective of EGRISS Recommendation use, disaggregated by region and by year of reporting in GAIN."
     ),
     colwidths = ncol(regional_data_combined)  # Ensure footer spans full table width
   ) %>%
@@ -94,7 +96,7 @@ ar.2.1 <- flextable(regional_data_combined) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.2.1: Country-led implementation of the Recommendations by region (Figure 6, AR pg.25)",
+        "Table 2.2: Country-led examples of IRRS, IRIS and IROSS implementation, by region",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
@@ -106,4 +108,4 @@ ar.2.1 <- flextable(regional_data_combined) %>%
   fix_border_issues()
 
 # Display the table
-ar.2.1
+ar.2.2
