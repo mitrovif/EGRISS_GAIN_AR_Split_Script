@@ -1,6 +1,5 @@
-
 # ============================================================================================================
-# AR.2.4:  Overview of Respondents Facing Challenges and Types of Challenges Identified (Figure 8)
+# AR.2.5: Overview of Respondents Facing Challenges and Types of Challenges Identified
 # ============================================================================================================
 
 library(flextable)
@@ -17,28 +16,30 @@ border_style <- fp_border(color = "black", width = 1)
 response_labels <- c(
   "Challenges faced" = "Challenges faced",
   "No challenges faced" = "No challenges faced",
-  "No Response on Challenges or Don't Know" = "No Response on Challenges or Don't Know"
+  "No response on challenges or don't know" = "No response on challenges or don't know"
 )
 
 pro19_summary <- group_roster %>%
-  filter(ryear %in% c(2023, 2024), g_conled == 1) %>%
+  filter(ryear %in% c(2023, 2024), g_conled == 1, PRO09 == 1) %>%
   select(ryear, PRO19) %>%
   mutate(Response = case_when(
     PRO19 == 2 | PRO19 == "NO" ~ "No challenges faced",
     PRO19 == 1 | PRO19 == "YES" ~ "Challenges faced",
-    PRO19 == 9 | PRO19 == "NO RESPONSE" ~ "No Response on Challenges or Don't Know",
-    PRO19 == 8 | PRO19 == "DON'T KNOW" ~ "No Response on Challenges or Don't Know",
-    is.na(PRO19) ~ "No Response on Challenges or Don't Know",
+    PRO19 == 9 | PRO19 == "NO RESPONSE" ~ "No response on challenges or don't know",
+    PRO19 == 8 | PRO19 == "DON'T KNOW" ~ "No response on challenges or don't know",
+    is.na(PRO19) ~ "No response on challenges or don't know",
     TRUE ~ as.character(PRO19)
   )) %>%
   mutate(Response = recode(Response, !!!response_labels)) %>%
   group_by(Response, ryear) %>%
   summarize(Count = n(), .groups = 'drop') %>%
   complete(Response = names(response_labels), ryear = c(2023, 2024), fill = list(Count = 0)) %>%
-  pivot_wider(names_from = ryear, values_from = Count)
+  pivot_wider(names_from = ryear, values_from = Count) %>%
+  mutate(Total = rowSums(across(c(`2023`, `2024`)), na.rm = TRUE))
 
 pro19_summary <- pro19_summary %>%
-  mutate(across(c(`2023`, `2024`), as.character))  # Convert to character for compatibility
+  mutate(across(c(`2023`, `2024`), as.character)) %>%  # Convert to character for compatibility
+  rename(`Challenges in Example Implementation` = Response)
 
 # Challenges Reported (Figure 9) - Transposed and with Labels
 challenge_labels <- c(
@@ -56,58 +57,59 @@ challenge_labels <- c(
 )
 
 challenges_data <- group_roster %>%
-  filter(ryear %in% c(2023, 2024), g_conled == 1) %>%
+  filter(ryear %in% c(2023, 2024), g_conled == 1, PRO09 == 1) %>%
   select(ryear, starts_with("PRO20.")) %>%
   pivot_longer(cols = starts_with("PRO20."), names_to = "Challenge", values_to = "Reported") %>%
   filter(Reported == 1) %>%
   mutate(Challenge = recode(Challenge, !!!challenge_labels)) %>%
   group_by(Challenge, ryear) %>%
   summarise(Count = n(), .groups = "drop") %>%
-  pivot_wider(names_from = ryear, values_from = Count, values_fill = list(Count = 0))
+  pivot_wider(names_from = ryear, values_from = Count, values_fill = list(Count = 0)) %>%
+  mutate(Total = rowSums(across(c(`2023`, `2024`)), na.rm = TRUE))
 
 challenges_data <- challenges_data %>%
-  rename(Response = Challenge) %>%
+  rename("Challenges in Example Implementation" = Challenge) %>%
   mutate(across(c(`2023`, `2024`), as.character))  # Convert to character for compatibility
 
 # Combining Both Tables into One Stacked Table
 combined_data <- bind_rows(
-  tibble(Response = "Count of Respondents Facing Challenges", `2023` = "", `2024` = ""),
+  tibble(`Challenges in Example Implementation` = "Count of Respondents Facing Challenges", `2023` = "", `2024` = ""),
   pro19_summary,
-  tibble(Response = "", `2023` = "", `2024` = ""),  # Spacer row
-  tibble(Response = "Types of Challenges Identified", `2023` = "", `2024` = ""),
+  tibble(`Challenges in Example Implementation` = "", `2023` = "", `2024` = ""),  # Spacer row
+  tibble(`Challenges in Example Implementation` = "Types of Challenges Faced in Examples Implementation", `2023` = "", `2024` = ""),
   challenges_data
 )
 
 # Identify row indices dynamically
-highlight_rows <- which(combined_data$Response %in% 
+highlight_rows <- which(combined_data$`Challenges in Example Implementation` %in% 
                           c("Count of Respondents Facing Challenges", 
-                            "Types of Challenges Identified"))
+                            "Types of Challenges Faced in Examples Implementation"))
 
 # Create the flextable
-ar.2.4 <- flextable(combined_data) %>%
+ar.2.5 <- flextable(combined_data) %>%
   theme_vanilla() %>%
   fontsize(size = 10, part = "header") %>%
   fontsize(size = 10, part = "body") %>%   
   bold(part = "header") %>%
   bg(part = "header", bg = header_color) %>%  # Light Blue Header
+  bg(bg = "#c9daf8", j = ~ Total) %>%   # Highlight the Total column
+  bg(bg = "#f4cccc", j = ~ `2024`) %>%   # Highlight the 2024 column
   bg(i = highlight_rows, bg = gray_highlight, part = "body") %>%  # Highlight Correct Rows
   border_outer(border = fp_border(color = "black", width = 2)) %>%  # Outer Border for Entire Table
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
   autofit() %>%
   add_footer_row(
     values = paste0(
-      "Footnote: Data based on respondents’ reports in 2023 and 2024. ",
-      "Categories include those who identified as facing challenges, not facing challenges, or did not provide sufficient information. ",
-      "The second section categorizes types of challenges identified. ",
-      "Key rows are highlighted in gray for improved readability."
+      "Table 2.5 supports Figure 8 on page 28 in the 2024 Annual Report (replicated above). In addition to Figure 8 data on types of challenges identified, table provides overall numbers of examples who did/did not face challenges."
     ),
     colwidths = ncol(combined_data)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
+  # Updated Caption
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.2.4: Overview of Respondents Facing Challenges and Types of Challenges Identified (Figure 8, AR pg.28)",
+        "Table 2.5: Overview of respondents facing challenges with example implementation, including types of challenges faced ",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
@@ -118,4 +120,4 @@ ar.2.4 <- flextable(combined_data) %>%
   )%>%
   fix_border_issues()
 
-print(ar.2.4)
+print(ar.2.5)
