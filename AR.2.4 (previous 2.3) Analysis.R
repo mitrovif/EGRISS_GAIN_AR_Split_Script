@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# AR.2.3: (text in AR) Components of EGRISS Recommendations Most Frequently Used
+# AR.2.4: (text in AR) Components of EGRISS Recommendations Most Frequently Used
 # ============================================================================================================
 
 # Step 1: Load the dataset
@@ -55,8 +55,11 @@ summarize_table <- function(data, g_conled_value) {
 }
 
 # Create separate tables for Nationally and Institutionally Led data
-nationally_led_data <- summarize_table(processed_data, 1)
-institutionally_led_data <- summarize_table(processed_data, 2)
+nationally_led_data <- summarize_table(processed_data, 1) %>%
+  mutate(Total = rowSums(across(c(IRIS, IRRS, IROSS)), na.rm = TRUE))
+
+institutionally_led_data <- summarize_table(processed_data, 2) %>%
+  mutate(Total = rowSums(across(c(IRIS, IRRS, IROSS)), na.rm = TRUE))
 
 # EGRISS Color Scheme
 primary_color <- "#4cc3c9"
@@ -79,11 +82,11 @@ merged_table <- nationally_led_data %>%
 highlight_row <- which(merged_table$Category == "Statistical framework/population group")
 
 # Create FlexTable with Enhanced Formatting
-ar.2.3 <- flextable(merged_table) %>%
-  add_header_row(values = c("", "Nationally Led Examples", "Institutionally Led Examples"), 
-                 colwidths = c(1, 3, 3)) %>%
+ar.2.4 <- flextable(merged_table) %>%
+  add_header_row(values = c("", "Country-Led Examples", "Institutional-Led Examples"), 
+                 colwidths = c(1, 4, 4)) %>%
   set_header_labels(
-    Category = "Elements of International Recommendations Used",
+    Category = "Elements of EGRISS Recommendations Used",
     IRRS_National = "IRRS",
     IRIS_National = "IRIS",
     IROSS_National = "IROSS",
@@ -102,6 +105,17 @@ ar.2.3 <- flextable(merged_table) %>%
   
   # Inner Borders for Entire Table
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
+  
+  # Highlight total columns
+  bg(bg = "#c9daf8", j = ~ Total_National) %>%   # Highlight the Total column
+  bg(bg = "#c9daf8", j = ~ Total_Institutional) %>%   # Highlight the Total column
+  
+  # Rename total columns
+  set_header_labels(
+    Category = "Elements of EGRISS Recommendations Used",
+    Total_National = "Total",
+    Total_Institutional = "Total"
+  ) %>%
   
   # Red Outer Border for "Statistical framework/population group"
   border(i = highlight_row, j = 1,
@@ -122,29 +136,26 @@ ar.2.3 <- flextable(merged_table) %>%
   # Improved User-Friendly Footnote
   add_footer_row(
     values = paste0(
-      "Footnote: This table shows which components of EGRISS recommendations are most frequently used. ",
-      "Each row represents an 'Element of International Recommendations' applied in data collection. ",
-      "The highlighted row with a **red border** marks the foundational element: 'Statistical framework/population group'. ",
-      "Columns show counts for data collected through Nationally Led Examples and Institutionally Led Examples. ",
-      "Values are based on reported implementation under PRO11/PRO12 variables."
+      "Table 2.4 supports analysis on page 27 in the 2024 Annual Report, disaggregated by elements of the EGRISS Recommendations used and by example lead (country-led or institution-led, both international or CSO)."
     ),
     colwidths = ncol(merged_table)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
   
   # Updated Caption
-set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.2.3: Components of EGRISS Recommendations Most Frequently Used, by recommendation and type (AR pg.27)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "Components of IRRS, IRIS and IROSS recommendations most frequently used, by recommendation and by example lead",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
       )
     )
-  )
-)%>%
+  )%>%
   fix_border_issues()
+
 # Display the Final Table
-print(ar.2.3)
+print(ar.2.4)
