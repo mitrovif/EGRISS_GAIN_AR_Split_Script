@@ -195,7 +195,7 @@ ar.2.6 <- flextable(combined_data) %>%
     values = paste0(
       "Table 2.6 is not in the 2024 Annual Report. Table shows implementation challenges, disaggregated by example lead (country-led or institution-led, both international or CSO). Question was first introduced in GAIN in 2023, so previous years are not presented."
     ),
-    colwidths = ncol(final_wide)
+    colwidths = ncol(combined_data)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
   set_caption(
