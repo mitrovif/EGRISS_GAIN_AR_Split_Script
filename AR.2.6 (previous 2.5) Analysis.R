@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# AR.2.5: Table of Implementation Challenges (PRO22) by Example Lead
+# AR.2.6: Table of Implementation Challenges (PRO22) by Example Lead
 # ============================================================================================================
 
 library(dplyr)
@@ -34,7 +34,10 @@ pro21_summary <- group_roster %>%
 pro21_summary <- pro21_summary %>%
   mutate(across(c(`2023`, `2024`), as.character)) %>%
   mutate(`Example Lead` = "Overall") %>%
-  relocate(`Example Lead`)
+  relocate(`Example Lead`) %>%
+  mutate_at(vars(`2023`, `2024`), as.numeric) %>%
+  mutate(Total = rowSums(across(c(`2023`, `2024`)), na.rm = TRUE)) %>%
+  mutate(across(c(`2023`, `2024`,Total), as.character))
 
 # Helper: Map raw categories to descriptive labels
 map_challenge <- function(df) {
@@ -115,8 +118,8 @@ summarise_by_group_year <- function(data, group_label) {
 
 # Run for each group type
 overall_df <- summarise_by_group_year(group_roster, "Overall")
-national_df <- summarise_by_group_year(filter(group_roster, g_conled == 1), "Nationally Led Examples")
-institution_df <- summarise_by_group_year(filter(group_roster, g_conled %in% c(2,3)), "Institutionally Led Examples")
+national_df <- summarise_by_group_year(filter(group_roster, g_conled == 1), "Country-Led Examples")
+institution_df <- summarise_by_group_year(filter(group_roster, g_conled %in% c(2,3)), "Institution-Led Examples")
 
 # Combine all
 final_pro22 <- bind_rows(overall_df, national_df, institution_df) %>%
@@ -136,9 +139,11 @@ final_wide <- final_pro22 %>%
 # Reorder 'Example Lead' as a factor with desired order
 final_wide <- final_wide %>%
   mutate(`Example Lead` = factor(`Example Lead`,
-                                 levels = c("Overall", "Nationally Led Examples", "Institutionally Led Examples"))) %>%
-  arrange(`Example Lead`)
-
+                                 levels = c("Overall", "Country-Led Examples", "Institution-Led Examples"))) %>%
+  arrange(`Example Lead`) %>%
+  mutate_at(vars(`2023`, `2024`), as.numeric) %>%
+  mutate(Total = rowSums(across(c(`2023`, `2024`)), na.rm = TRUE))  %>%
+  mutate(across(c(`2023`, `2024`,Total), as.character))
 
 # Combining Both Tables into One Stacked Table
 combined_data <- bind_rows(
@@ -169,15 +174,16 @@ combined_data <- bind_rows(
   relocate(`Example Lead`, `Implementation Challenge`) %>%
   rename(`EGRISS Recommendations Implementation Challenges` = `Implementation Challenge`)
 
-
 # Create FlexTable for Word
-ar.2.5 <- flextable(combined_data) %>%
+ar.2.6 <- flextable(combined_data) %>%
   theme_vanilla() %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
   fontsize(size = 10, part = "all") %>%
   border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "all", border = fp_border(color = "gray", width = 0.5)) %>%
+  bg(bg = "#f4cccc", j = ~ `2024`) %>%   # Highlight the 2024 column
+  bg(bg = "#c9daf8", j = ~ Total) %>%   # Highlight the Total column
   bg(i = 1, bg = "#D9D9D9") %>%
   bg(i = 6, bg = "#D9D9D9") %>%
   merge_v(j = ~ `Example Lead`) %>%
@@ -187,8 +193,7 @@ ar.2.5 <- flextable(combined_data) %>%
   autofit() %>%
   add_footer_row(
     values = paste0(
-      "Footnote: Structured PRO22A–F and cleaned free-text PRO22 entries. ",
-      "Split by year and example lead type. Years with no responses are blank."
+      "Table 2.6 is not in the 2024 Annual Report. Table shows implementation challenges, disaggregated by example lead (country-led or institution-led, both international or CSO). Question was first introduced in GAIN in 2023, so previous years are not presented."
     ),
     colwidths = ncol(final_wide)
   ) %>%
@@ -196,7 +201,7 @@ ar.2.5 <- flextable(combined_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.2.5: Breakdown of Implementation Challenges by Example Lead and Year (Wide Format)",
+        "Table 2.6: Overview of respondents facing challenges with IRRS, IRIS and IROSS application, including types of challenges faced",
         props = fp_text(font.family = "Helvetica", font.size = 10)
       )
     )
@@ -204,4 +209,4 @@ ar.2.5 <- flextable(combined_data) %>%
   fix_border_issues()
 
 # Display the table
-ar.2.5
+ar.2.6
