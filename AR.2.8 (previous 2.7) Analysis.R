@@ -1,6 +1,6 @@
 
 # ============================================================================================================
-# AR.2.7 Partnerships and Organization Mentions in R with FlexTable
+# AR.2.8 Partnerships and Organization Mentions in R with FlexTable
 # ============================================================================================================
 
 library(dplyr)
@@ -48,44 +48,41 @@ mention_counts <- bind_rows(sums)
 
 # Print the final sums
 mention_counts <- mention_counts %>%
-  select(c("Organization", "2021", "2022", "2023", "2024"))
-print(mention_counts)
+  select(c("Organization", "2021", "2022", "2023", "2024")) %>%
+  mutate(Total = rowSums(across(c(`2021`, `2022`, `2023`, `2024`)), na.rm = TRUE)) %>%
+  rename(`Institution-Led Partnership Organisation Mention` = "Organization")
 
 # Step 3: Create FlexTables
 # Styling Variables
 section_header_color <- "#f3f3f3"  # Light grey for section headers
 
 # Create FlexTable with Styling for specific orgs mentioned
-ar.2.7 <- flextable(mention_counts) %>%
+ar.2.8 <- flextable(mention_counts) %>%
   theme_vanilla() %>%  # Base theme
   fontsize(size = 10, part = "all") %>%  # Set font size
   border_outer(part = "all", border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(part = "body", border = fp_border(color = "gray", width = 1)) %>%
   bold(part = "header") %>%  # Bold the header
   bg(part = "header", bg = "#4cc3c9") %>%  # Set header background color
+  bg(j = ~ `Total`, bg = "#c9daf8") %>%
+  bg(j = ~ `2024`, bg = "#F4CCCC") %>%
   autofit() %>%  # Auto-adjust column widths
-  set_table_properties(layout = "autofit", width = 0.6)  # Adjust table sizing
-
-# Apply conditional styling (only if table has rows)
-if (nrow(mention_counts) > 0) {
-  ar.2.7 <- ar.2.7 %>%
-    color(i = 1, color = "black", part = "body")  # Keep the text black (default)
-}
-
-# Add Caption
-ar.2.7 <- ar.2.7 %>%
-set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.2.7: Mentions of international partners in country-led implementations, by year (AR pg.28)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  set_table_properties(layout = "autofit", width = 0.6) %>%  # Adjust table sizing
+  add_footer_row(
+    values = paste0(
+      "Table 2.8 supports analysis on page 28 in the 2024 Annual Report. Table c by most mentions of the international partners supporting country-led examples and year."
+    ),
+    colwidths = ncol(mention_counts)
+  ) %>%
+  fontsize(size = 7, part = "footer") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "Table 2.8: Mentions of institution-led partnership organizations in country-led examples",
+        props = fp_text(font.family = "Helvetica", font.size = 10)
       )
     )
-  )
-)%>%
+  ) %>%
   fix_border_issues()
-# Display the Table
-print(ar.2.7)
+
+ar.2.8
