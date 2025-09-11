@@ -1,31 +1,6 @@
 # =============================================================================================================
-# AR.4.2: Add Future Projects with Quarterly Breakdown
+# AR.6.2: Add Future Projects with Quarterly Breakdown
 # =============================================================================================================
-
-#rm(list = ls())
-
-# Clear the console
-#cat("\014")
-
-
-# ======================================================
-# Set Working Directory Dynamically
-# ======================================================
-# Copy-Paste your Windows file path (with backslashes)
-#working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-03-12_10-04-14"
-
-# Automatically replace backslashes (\) with forward slashes (/)
-#working_dir <- gsub("\\\\", "/", working_dir)
-
-# Set working directory
-#setwd(working_dir)
-
-# Confirm the working directory
-#message("Working directory set to: ", getwd())
-
-# ======================================================
-# R Script for Enhanced GAIN 2024 Annual Report (Word)
-# ======================================================
 
 # Load required libraries
 library(dplyr)
@@ -147,8 +122,6 @@ population_summary <- group_roster2 %>%
   count(Population_Type, Source_Variable) %>%
   pivot_wider(names_from = Source_Variable, values_from = n, values_fill = 0)
 
-
-
 # Create FlexTables for Word
 quarter_summary_flextable <- flextable(quarter_summary) %>%
   theme_booktabs() %>%
@@ -234,19 +207,19 @@ loc01_summary <- group_roster2 %>%
 
 # Add common 'Label' column for merged structure
 quarter_summary <- quarter_summary %>%
-  mutate(Category = "Quarter", Label = Quarter) %>%
-  select(Category, Label, everything(), -Quarter)
+  mutate(Category = "Future Example Planned Start", Label = `Quarter`) %>%
+  select(Category, Label, everything(), -`Quarter`)
 
 population_summary <- population_summary %>%
-  mutate(Category = "Population", Label = Population_Type) %>%  # Corrected to Population_Type
+  mutate(Category = "Future Example Population of Interest", Label = Population_Type) %>%  # Corrected to Population_Type
   select(Category, Label, everything(), -Population_Type)
 
 region_summary <- region_summary %>%
-  mutate(Category = "Region", Label = region) %>%
+  mutate(Category = "Future Example Region", Label = region) %>%
   select(Category, Label, everything(), -region)
 
 loc01_summary <- loc01_summary %>%
-  mutate(Category = "Type of Example", Label = LOC01_Category) %>%
+  mutate(Category = "Future Example Lead", Label = LOC01_Category) %>%
   select(Category, Label, everything(), -LOC01_Category)
 
 # Combine all tables
@@ -270,10 +243,10 @@ merged_data <- merged_data %>%
 merged_summary_flextable <- flextable(merged_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
-  bold(i = ~ Category == "Quarter", bold = TRUE, part = "body") %>%
-  bold(i = ~ Category == "Population", bold = TRUE, part = "body") %>%
-  bold(i = ~ Category == "Region", bold = TRUE, part = "body") %>%
-  bold(i = ~ Category == "Type of Example", bold = TRUE, part = "body") %>%
+  # bold(i = ~ Category == "Quarter", bold = TRUE, part = "body") %>%
+  # bold(i = ~ Category == "Population", bold = TRUE, part = "body") %>%
+  # bold(i = ~ Category == "Region", bold = TRUE, part = "body") %>%
+  # bold(i = ~ Category == "Type of Example", bold = TRUE, part = "body") %>%
   autofit() %>%
   set_caption(caption = "Combined Future Projects Breakdown Including Type of Example with Column Totals")
 
@@ -283,25 +256,27 @@ list(quarter_summary_flextable, population_summary_flextable, region_summary_fle
 # Rename the merged flextable and apply beautification
 header_color <- "#4cc3c9"
 
-ar.4.2 <- flextable(merged_data) %>%
+ar.6.2 <- flextable(merged_data) %>%
   theme_vanilla() %>%
+  set_header_labels(
+    Category = "Future Example",
+    Label = ""
+  ) %>%
   bold(part = "header") %>%
   bg(bg = header_color, part = "header") %>%
   color(color = "black", part = "header") %>%
   fontsize(size = 10, part = "header") %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(border = fp_border(color = "gray", width = 0.5), part = "all") %>%  # Keep horizontal borders
+  bg(bg = "gray", i = 6:9) %>%
+  bg(bg = "gray", i = 17:19) %>%
+  bg(bg = "#c9daf8", j = ~ `Total`) %>%  # Highlight the Count column
   merge_v(j = 1) %>%  # Merge vertical cells in first column
   fontsize(size = 9, part = "body") %>%
   set_table_properties(layout = "autofit") %>%
   add_footer_row(
     values = paste0(
-      "Footnote: This table combines quarterly, population, regional and example-type breakdowns of future ",
-      "projects based on `group_roster2`. Data sources/tools (FPR05.*) were recoded into categories such as Survey, ",
-      "Administrative Data, Census, Data Integration, Non-Traditional, Strategy, Guidance/Toolkit, Workshop/Training, Other. ",
-      "Quarter (Q1–Q4) derived from `q2025`; Population types from FPR04.* (Refugee, IDP, Stateless, Mixed); ",
-      "Region via the `region` field; Example Type from LOC01 (1 = Country; 2/3 = International). Counts are the number ",
-      "of future projects per category for 2025."
+      "Table 6.2 is not featured in the 2024 Annual Report. Table is disaggregated by upcoming multiple sources (respondents to GAIN survey answered a multiple-choice question), by quarter, population of interest, region of implementation and future example-lead."
     ),
     colwidths = ncol(merged_data)
   ) %>%
@@ -309,7 +284,7 @@ ar.4.2 <- flextable(merged_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.4.2 Future Projects Overview, by source or tool, quarter, population and region (Not in AR)",
+        "Table 6.2 Overview of future example implementation, by planned start date, population of interest, region, example lead, and data sources",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
@@ -319,6 +294,7 @@ ar.4.2 <- flextable(merged_data) %>%
     )
   )%>%
   fix_border_issues()
-ar.4.2 <- autofit(ar.4.2)
 
-ar.4.2
+ar.6.2 <- autofit(ar.6.2)
+
+ar.6.2
