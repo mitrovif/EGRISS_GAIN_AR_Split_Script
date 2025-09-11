@@ -144,8 +144,7 @@ ar.2.1 <- flextable(final_unique_country_table) %>%
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
-          italic      = FALSE,
-          bold = TRUE
+          italic      = FALSE
         )
       )
     )
