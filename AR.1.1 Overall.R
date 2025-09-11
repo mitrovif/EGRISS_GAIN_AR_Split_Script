@@ -165,7 +165,6 @@ ar.1.1 <- flextable(merged_df) %>%
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
-          bold = TRUE,
           italic      = FALSE
         )
       )
