@@ -2,6 +2,31 @@
 # AR.6.2: Add Future Projects with Quarterly Breakdown
 # =============================================================================================================
 
+#rm(list = ls())
+
+# Clear the console
+#cat("\014")
+
+
+# ======================================================
+# Set Working Directory Dynamically
+# ======================================================
+# Copy-Paste your Windows file path (with backslashes)
+#working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_2025-03-12_10-04-14"
+
+# Automatically replace backslashes (\) with forward slashes (/)
+#working_dir <- gsub("\\\\", "/", working_dir)
+
+# Set working directory
+#setwd(working_dir)
+
+# Confirm the working directory
+#message("Working directory set to: ", getwd())
+
+# ======================================================
+# R Script for Enhanced GAIN 2024 Annual Report (Word)
+# ======================================================
+
 # Load required libraries
 library(dplyr)
 library(flextable)
@@ -122,6 +147,21 @@ population_summary <- group_roster2 %>%
   count(Population_Type, Source_Variable) %>%
   pivot_wider(names_from = Source_Variable, values_from = n, values_fill = 0)
 
+# test <- population_summary %>%
+#   filter(Population_Type == "Mixed")
+# 
+# test2 <- test %>%
+#   mutate(
+#     Status_Combo = case_when(
+#       Refugee == 1 & IDP == 1 & Stateless == 1 ~ "Refugee + IDP + Stateless",
+#       Refugee == 1 & IDP == 1 & Stateless == 0 ~ "Refugee + IDP",
+#       Refugee == 1 & IDP == 0 & Stateless == 1 ~ "Refugee + Stateless",
+#       Refugee == 0 & IDP == 1 & Stateless == 1 ~ "IDP + Stateless",
+#       TRUE ~ "None"
+#     )
+#   ) %>%
+#   count(Status_Combo)
+
 # Create FlexTables for Word
 quarter_summary_flextable <- flextable(quarter_summary) %>%
   theme_booktabs() %>%
@@ -172,7 +212,7 @@ group_roster2 <- group_roster2 %>%
   mutate(
     LOC01_Category = case_when(
       LOC01 == 1 ~ "Country (NSO or Other in NSS)",
-      LOC01 %in% c(2, 3) ~ "International (International Organization or CSO)",
+      LOC01 %in% c(2, 3) ~ "International (International organisation or CSO)",
       TRUE ~ "Other"
     )
   )
