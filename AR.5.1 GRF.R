@@ -77,22 +77,23 @@ total_row <- stat_pledges %>%
   )
 
 # Section headers
-source_header <- tibble(`GRF Data on Pledges` = "Source of Data", .rows = 1)
-region_header <- tibble(`GRF Data on Pledges` = "Summary by Region", .rows = 1)
-entity_header <- tibble(`GRF Data on Pledges` = "Summary by Submitting Entity Type", .rows = 1)
+source_header <- tibble(`GRF Data on Pledges` = "Source", .rows = 1)
+region_header <- tibble(`GRF Data on Pledges` = "Region", .rows = 1)
+entity_header <- tibble(`GRF Data on Pledges` = "Pledge Lead", .rows = 1)
 
 # Build final table ----------------------------------------------------------------------------------------
 
 merged_summary <- bind_rows(
-  total_row,
   source_header,
   source_summary,
   region_header,
   region_summary,
   entity_header,
-  entity_summary
+  entity_summary,
+  total_row
 ) %>%
-  rename(`Total Pledges` = Total_Pledges)
+  rename(`Total` = Total_Pledges) %>%
+  rename(`Updates on Global Refugee Forum (GRF) Pledges Progress` = `GRF Data on Pledges`)
 
 # Styling constants
 egriss_color         <- "#003366"
@@ -112,16 +113,22 @@ ar.5.1 <- flextable(merged_summary) %>%
   # Style total row
   bold(i = 1, part = "body") %>%
   bg(i = 1, bg = egriss_color, part = "body") %>%
-  color(i = 1, color = "white", part = "body") %>%
+  color(i = 1, color = "black", part = "body") %>%
   # Style source header row only
-  bg(i = ~ `GRF Data on Pledges` == "Source of Data", bg = section_header_color, part = "body") %>%
+  bg(i = ~ `Updates on Global Refugee Forum (GRF) Pledges Progress` == "Data", bg = section_header_color, part = "body") %>%
   # Optional: bold the section header text
-  bold(i = ~ `GRF Data on Pledges` %in% c("Source of Data","Summary by Region","Summary by Submitting Entity Type"), part = "body") %>%
+  bold(i = ~ `Updates on Global Refugee Forum (GRF) Pledges Progress` %in% c("Source","Region","Pledge Lead"), part = "body") %>%
+  bg(j = ~ Total, bg = "#c9daf8") %>%  # Highlight the total column
+  bg(i = 22, bg = "#3B71B3") %>%  # Highlight the total column
+  color(i = 22, color = "white", part = "body") %>%
+  bold(i = 22, part = "body") %>%
+  bg(bg = "gray", i = 1) %>%
+  bg(bg = "gray", i = 5) %>%
+  bg(bg = "gray", i = 14) %>%
   # Footer
   add_footer_row(
     values = paste0(
-      "Footnote: Data is based on GAIN Survey 2024 analysis of Statistical Inclusion Pledges. ",
-      "The merged table presents the breakdown by data source, region, and submitting entity type."
+      "Table 5.2 is not featured in the 2024 Annual Report. Table is disaggregated by updates on GRF Statistical Inclusion Pledges progress, by data source, region of pledge origin, and pledge lead type."
     ),
     colwidths = ncol(merged_summary)
   ) %>%
@@ -129,7 +136,7 @@ ar.5.1 <- flextable(merged_summary) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "AR.5.1: GRF Data on Pledges Implementation, by source, stage, region, and entity type",
+        "Table 5.1: Update on implementation of GRF pledges on statistical inclusion",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10
