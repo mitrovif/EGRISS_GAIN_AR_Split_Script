@@ -243,7 +243,7 @@ heavy_border  <- fp_border(color = "black", width = 2)
 
 first_rows <- which(!duplicated(tbl_rows$`Example Category`))
 
-grf06_tbl <- flextable(tbl_rows) %>%
+ar.5.2 <- flextable(tbl_rows) %>%
   theme_vanilla() %>%
   set_header_labels(
     `Example Category` = "Example Category",
@@ -270,4 +270,4 @@ grf06_tbl <- flextable(tbl_rows) %>%
   ) %>%
   fix_border_issues()
 
-grf06_tbl
+ar.5.2
