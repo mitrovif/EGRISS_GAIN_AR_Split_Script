@@ -1,6 +1,7 @@
 # ======================================================
 # Set Working Directory Dynamically
 # ======================================================
+
 # Copy-Paste your Windows file path (with backslashes)
 working_dir <- "C:\\Users\\mitro\\UNHCR\\EGRISS Secretariat - Documents\\905 - Implementation of Recommendations\\01_GAIN Survey\\Integration & GAIN Survey\\EGRISS GAIN Survey 2024\\10 Data\\Analysis Ready Files\\Backup_Legacy"
 
@@ -65,43 +66,45 @@ create_flextable <- function(data, title) {
 # ======================================================
 
 # Define the path for additional scripts
-scripts_dir <- "C:/Users/mitro/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024/11 Reporting/Split-AR-Script"
+scripts_dir <- "C:/Users/Ladina/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024/11 Reporting/Split-AR-Script"
 
 # Overall files
 source(file.path(scripts_dir, "AR.1.1 Overall.R"))
 source(file.path(scripts_dir, "AR.1.2 Overall.R"))
 source(file.path(scripts_dir, "AR.1.3 Overall.R"))
 source(file.path(scripts_dir, "AR.1.4 Overall.R"))
-source(file.path(scripts_dir, "AR.1.5 Overall.R"))
 
-# National files
-source(file.path(scripts_dir, "AR.2.1 National.R"))
-source(file.path(scripts_dir, "AR.2.2 National.R"))
-source(file.path(scripts_dir, "AR.2.3 National.R"))
-source(file.path(scripts_dir, "AR.2.4 National.R"))
-source(file.path(scripts_dir, "AR.2.5 National.R"))
-source(file.path(scripts_dir, "AR.2.6 National.R"))
-source(file.path(scripts_dir, "AR.2.7 National.R"))
-# Institutional files
-source(file.path(scripts_dir, "AR.3.1 Institutional.R"))
-source(file.path(scripts_dir, "AR.3.2 Institutional.R"))
+# Analysis files
+source(file.path(scripts_dir, "AR.2.1 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.2 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.3 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.4 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.5 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.6 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.7 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.8 Analysis.R"))
+source(file.path(scripts_dir, "AR.2.9 Analysis.R"))
 
-# Future, GRF, and Map files
-source(file.path(scripts_dir, "AR.4.1 Future.R"))
-source(file.path(scripts_dir, "AR.4.2 Future.R"))
+# Methodological files
+source(file.path(scripts_dir, "AR.3.1 Methodological.R"))
+source(file.path(scripts_dir, "AR.3.2 Methodological.R"))
+
+# Publication files
+source(file.path(scripts_dir, "AR.4.1 Publications.R"))
+source(file.path(scripts_dir, "AR.4.2 Publications.R"))
+
+# GRF files
 source(file.path(scripts_dir, "AR.5.1 GRF.R"))
-source(file.path(scripts_dir, "AR.6.1 Activities.R"))
-source(file.path(scripts_dir, "AR.6.2 Activities.R"))
-source(file.path(scripts_dir, "AR.6.3 Activities.R"))
-source(file.path(scripts_dir, "AR.7.1 Duration.R"))
-source(file.path(scripts_dir, "AR.8.1 Workstream.R"))
-source(file.path(scripts_dir, "AR.8.2 Workstream.R"))
-source(file.path(scripts_dir, "AR.8.1 Map.R"))
+source(file.path(scripts_dir, "AR.5.2 GRF.R"))
+
+# Future files
+source(file.path(scripts_dir, "AR.6.1 Future.R"))
+source(file.path(scripts_dir, "AR.6.2 Future.R"))
+
+# Map files
+source(file.path(scripts_dir, "AR.7.1 Map.R"))
+
 # Final Output Script
 source(file.path(scripts_dir, "AR.0.2 Output.R"))
-
-
-
-
 
 message("All scripts executed successfully!")
