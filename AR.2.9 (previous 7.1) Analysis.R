@@ -1,6 +1,6 @@
 
 # ======================================================
-# AR: 7.1: Script: Calculate `example_duration` from PRO04_year and PRO05_year
+# AR: 2.9: Script: Calculate `example_duration` from PRO04_year and PRO05_year
 # Description:
 # - If either year is NA → NA
 # - If either year is "9999" or "9998" → 99
@@ -78,6 +78,7 @@ group_roster <- group_roster %>%
       TRUE ~ "Other**"
     )
   )
+
 aggregated_national <- group_roster %>%
   filter(g_conled == 1) %>%
   mutate(across(starts_with("PRO08."), as.integer)) %>%
@@ -97,9 +98,9 @@ aggregated_national <- group_roster %>%
       TRUE ~ "Unknown"
     ),
     `Use of Recommendations` = case_when(
-      PRO09 == 1 ~ "Using Recommendations",
-      PRO09 %in% c(2, 8) ~ "Not Using Recommendations and Other*",
-      TRUE ~ "Not Using Recommendations and Other*"
+      PRO09 == 1 ~ "Using EGRISS Recommendations",
+      PRO09 %in% c(2, 8) ~ "Not Using EGRISS Recommendations and Other*",
+      TRUE ~ "Not Using EGRISS Recommendations and Other*"
     )
   ) %>%
   group_by(`Use of Recommendations`, Source, example_duration_category) %>%
@@ -110,7 +111,7 @@ aggregated_national <- group_roster %>%
     values_fill = 0
   ) %>%
   mutate(Total = rowSums(select(., -c(`Use of Recommendations`, Source)), na.rm = TRUE)) %>%
-  mutate(`Example Category` = "Country-Led Examples")
+  mutate(`Example Lead` = "Country-Led Examples")
 
 # Step 2: Institutional Examples (g_conled == 2 or 3)
 aggregated_institutional <- group_roster %>%
@@ -132,9 +133,9 @@ aggregated_institutional <- group_roster %>%
       TRUE ~ "Unknown"
     ),
     `Use of Recommendations` = case_when(
-      PRO09 == 1 ~ "Using Recommendations",
-      PRO09 %in% c(2, 8) ~ "Not Using Recommendations and Other*",
-      TRUE ~ "Not Using Recommendations and Other*"
+      PRO09 == 1 ~ "Using EGRISS Recommendations",
+      PRO09 %in% c(2, 8) ~ "Not Using EGRISS Recommendations and Other*",
+      TRUE ~ "Not Using EGRISS Recommendations and Other*"
     )
   ) %>%
   group_by(`Use of Recommendations`, Source, example_duration_category) %>%
@@ -145,30 +146,30 @@ aggregated_institutional <- group_roster %>%
     values_fill = 0
   ) %>%
   mutate(Total = rowSums(select(., -c(`Use of Recommendations`, Source)), na.rm = TRUE)) %>%
-  mutate(`Example Category` = "Institutional-Led Examples")
+  mutate(`Example Lead` = "Institutional-Led Examples")
 
 # after your bind_rows(...) and arrange(...) step, insert:
 aggregated_data <- bind_rows(aggregated_national, aggregated_institutional) %>%
   mutate(
     `Use of Recommendations` = factor(
       `Use of Recommendations`,
-      levels = c("Using Recommendations", "Not Using Recommendations and Other*")
+      levels = c("Using EGRISS Recommendations", "Not Using EGRISS Recommendations and Other*")
     )
   ) %>%
   arrange(
-    `Example Category`,
+    `Example Lead`,
     `Use of Recommendations`,
     factor(Source, levels = c("Survey", "Census", "Administrative Data", "Data Integration", "Other**"))
   ) %>%
-  # ← ensure Example Category is first
-  select(`Example Category`, everything())
+  # ensure Example Lead is first
+  select(`Example Lead`, everything())
 
 # now build the flextable with footnote
-ar.7.1 <- flextable(aggregated_data) %>%
+ar.2.9 <- flextable(aggregated_data) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
-  merge_v(j = ~ `Example Category`) %>%
+  merge_v(j = ~ `Example Lead`) %>%
   merge_v(j = ~ `Use of Recommendations`) %>%
   bg(bg = "#C9DAF8", j = ~ Total) %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
@@ -177,12 +178,13 @@ ar.7.1 <- flextable(aggregated_data) %>%
   autofit() %>%
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   
-  # ← new detailed footnote
+  # new detailed footnote
   add_footer_row(
     values = paste0(
-      "Table 2.9 is not featured in the 2024 Annual Report. Table is disaggregated by example sources (respondents to GAIN survey answered a multiple-choice question) and implementation length. Table is disaggregated for 2024 only. ",
-      "*Other in Not Using EGRISS Recommendations include: Don't Know and Not Reported ",
-      "** Other in sources include: Non-Traditional, Strategy, Guidance/Toolkit, Workshop/Training and Other "
+      "Table 2.9 is not featured in the 2024 Annual Report. Table is disaggregated by example sources (respondents to GAIN survey answered a multiple-choice question) and implementation length. Table is disaggregated for 2024 only.
+*Other in Not Using EGRISS Recommendations include: Don't Know and Not Reported
+** Other in sources include: Non-Traditional, Strategy, Guidance/Toolkit, Workshop/Training and Other
+"
     ),
     colwidths = ncol(aggregated_data)
   ) %>%
@@ -193,7 +195,7 @@ ar.7.1 <- flextable(aggregated_data) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "Table 2.9: Length of example implementation",
+        "Table 2.9: Length of implementation",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
@@ -209,4 +211,4 @@ ar.7.1 <- flextable(aggregated_data) %>%
   fix_border_issues()
 
 # then view
-ar.7.1
+ar.2.9
