@@ -128,7 +128,7 @@ ar.5.1 <- flextable(merged_summary) %>%
   # Footer
   add_footer_row(
     values = paste0(
-      "Table 5.2 is not featured in the 2024 Annual Report. Table is disaggregated by updates on GRF Statistical Inclusion Pledges progress, by data source, region of pledge origin, and pledge lead type."
+      "Table 5.1 is not featured in the 2024 Annual Report. Table is disaggregated by updates on GRF Statistical Inclusion Pledges progress, by data source, region of pledge origin, and pledge lead type."
     ),
     colwidths = ncol(merged_summary)
   ) %>%
