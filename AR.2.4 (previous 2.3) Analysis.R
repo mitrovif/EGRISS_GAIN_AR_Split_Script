@@ -83,7 +83,7 @@ highlight_row <- which(merged_table$Category == "Statistical framework/populatio
 
 # Create FlexTable with Enhanced Formatting
 ar.2.4 <- flextable(merged_table) %>%
-  add_header_row(values = c("", "Country-Led Examples", "Institutional-Led Examples"), 
+  add_header_row(values = c("", "Country-Led Examples", "Institution-Led Examples"), 
                  colwidths = c(1, 4, 4)) %>%
   set_header_labels(
     Category = "Elements of EGRISS Recommendations Used",
