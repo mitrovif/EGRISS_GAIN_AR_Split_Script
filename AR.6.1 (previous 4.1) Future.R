@@ -1,6 +1,6 @@
 
 # =============================================================================================================
-#  AR.4.1: Future Examples Using Different Types of Data Source or Tool 
+#  AR.6.1: Future Examples Using Different Types of Data Source or Tool 
 # =============================================================================================================
 
 group_roster_file2 <- file.path(working_dir, "analysis_ready_group_roster2.csv")
@@ -21,7 +21,7 @@ source_summary <- group_roster2 %>%
   ) %>%
   filter(Value == 1) %>%
   mutate(
-    Source = case_when(
+    `Future Example Source` = case_when(
       grepl("SURVEY", Source_Variable) ~ "Survey",
       grepl("ADMINISTRATIVE.DATA", Source_Variable) ~ "Administrative Data",
       grepl("CENSUS", Source_Variable) ~ "Census",
@@ -34,15 +34,15 @@ source_summary <- group_roster2 %>%
       TRUE ~ "Unknown"
     )
   ) %>%
-  count(Source) %>%
-  rename(Count = n) %>%
-  bind_rows(tibble(Source = "Total", Count = sum(.$Count)))
+  count(`Future Example Source`) %>%
+  rename(`Future Examples (2025/2026)` = n) %>%
+  arrange(desc(`Future Examples (2025/2026)`))
 
 # Create a FlexTable for Word
-ar.4.1 <- flextable(source_summary) %>%
+ar.6.1 <- flextable(source_summary) %>%
   theme_booktabs() %>%
   bold(part = "header") %>%
-  bg(bg = "#c9daf8", j = ~ Count) %>%  # Highlight the Count column
+  bg(bg = "#c9daf8", j = ~ `Future Examples (2025/2026)`) %>%  # Highlight the Count column
   border_outer(border = fp_border(color = "black", width = 2)) %>%
   border_inner_h(border = fp_border(color = "gray", width = 0.5), part = "all") %>%
   bg(part = "header", bg = "#4cc3c9") %>%
@@ -50,24 +50,22 @@ ar.4.1 <- flextable(source_summary) %>%
   autofit() %>%
   add_footer_row(
     values = paste0(
-      "Footnote: Counts are based on FPR05_* fields in `group_roster2` (converted to numeric) where a value of 1 ",
-      "indicates the use of that source/tool. “Source” categories derived via grepl on variable names: Survey, ",
-      "Administrative Data, Census, Data Integration, Non-Traditional, Strategy, Guidance/Toolkit, Workshop/Training, ",
-      "Other, Unknown. “Total” row is the sum across all categories."
+      "Table 6.1 supports Figure 14 on page 50 in the 2024 Annual Report (replicated above). Table is disaggregated by upcoming multiple sources (respondents to GAIN survey answered a multiple-choice question)."
     ),
     colwidths = ncol(source_summary)
   ) %>%
   fontsize(size = 7, part = "footer") %>%
-set_caption(
-  caption = as_paragraph(
-    as_chunk(
-      "AR.4.1:  Future Examples Using Different Types of Data Source or Tool (Figure 14, AR pg.50)",
-      props = fp_text(
-        font.family = "Helvetica",
-        font.size   = 10,
-        italic      = FALSE
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "Table 6.1:  Future examples using different types of data sources or tools",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10,
+          italic      = FALSE
+        )
       )
     )
   )
-)
-ar.4.1                          
+
+ar.6.1                          
