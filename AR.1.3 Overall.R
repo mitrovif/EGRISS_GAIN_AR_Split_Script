@@ -106,8 +106,7 @@ ar.1.3 <- flextable(final_table) %>%
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
-          italic      = FALSE,
-          bold = TRUE
+          italic      = FALSE
         )
       )
     )
