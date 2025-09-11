@@ -146,7 +146,7 @@ aggregated_institutional <- group_roster %>%
     values_fill = 0
   ) %>%
   mutate(Total = rowSums(select(., -c(`Use of Recommendations`, Source)), na.rm = TRUE)) %>%
-  mutate(`Example Lead` = "Institutional-Led Examples")
+  mutate(`Example Lead` = "Institution-Led Examples")
 
 # after your bind_rows(...) and arrange(...) step, insert:
 aggregated_data <- bind_rows(aggregated_national, aggregated_institutional) %>%
