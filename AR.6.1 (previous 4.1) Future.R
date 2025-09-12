@@ -58,7 +58,7 @@ ar.6.1 <- flextable(source_summary) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "Table 6.1:  Future examples using different types of data sources or tools",
+        "Table 6.1: Future examples using different types of data sources or tools",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
