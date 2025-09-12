@@ -146,7 +146,7 @@ ar.2.4 <- flextable(merged_table) %>%
   set_caption(
     caption = as_paragraph(
       as_chunk(
-        "Components of IRRS, IRIS and IROSS recommendations most frequently used, by recommendation and by example lead",
+        "Table 2.4: Components of IRRS, IRIS and IROSS recommendations most frequently used, by recommendation and by example lead",
         props = fp_text(
           font.family = "Helvetica",
           font.size   = 10,
