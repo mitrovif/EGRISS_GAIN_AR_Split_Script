@@ -1,4 +1,5 @@
 
+
 # ======================================================
 # Add to Word document
 # ======================================================
@@ -21,14 +22,15 @@ center_table <- function(ft) {
 
 # Apply to all ar.x.y tables (adjust this list as needed)
 table_names <- c(
-  "ar.1.1", "ar.1.2", "ar.1.3", "ar.1.4", "ar.1.5",
-  "ar.2.1", "ar.2.2", "ar.2.3", "ar.2.4", "ar.2.5", "ar.2.6", "ar.2.7",
+  "ar.1.1", "ar.1.2", "ar.1.3", "ar.1.4",
+  "ar.2.1", "ar.2.2", "ar.2.3", "ar.2.4", "ar.2.5", "ar.2.6", "ar.2.7", "ar.2.8", "ar.2.9",
   "ar.3.1", "ar.3.2",
   "ar.4.1", "ar.4.2",
-  "ar.5.1",
-  "ar.6.1", "ar.6.2", "ar.6.3",
+  "ar.5.1", "ar.5.2",
+  "ar.6.1", "ar.6.2",
   "ar.7.1"
 )
+
 for (name in table_names) {
   if (exists(name)) {
     assign(name, center_table(get(name)))
@@ -79,6 +81,7 @@ word_doc <- word_doc %>%
     )
   )
 
+
 # Define list items to add in font size 10
 list_items <- c(
   "",
@@ -92,42 +95,42 @@ list_items <- c(
   "",
   "",
   "",
-  "Overall GAIN Data (AR.1):",
-  "    AR.1.1: Trend of Country and Institutional-led Implementation Example, by year (Figure 4, AR pg. 24)",
-  "    AR.1.2: Overview of the Implementation of the IRRS, IRIS and IROSS in 2024 (Figure 5, AR pg.25)",
-  "    AR.1.3: Overview of the Mixed Implementation of the IRRS, IRIS and IROSS, by year (AR pg.24)",
-  "    AR.1.4: Count of Country-Led Implementation Examples, by Continents/Regions and Year (Not in AR)",
-  "    AR.1.5: List of countries with country-led implementation using recommendations by region (Not in AR)",
+  "Section 1: Overall Trends:",
+  "    Table 1.1: Trend of IRRS, IRIS and IROSS implementation examples, by year (AR: Figure 4, pg. 24)",
+  "    Table 1.2 Breakdown of IRRS, IRIS and IROSS implementation examples in 2024 (AR: Figure 5, pg. 25)",
+  "    Table 1.3: Breakdown of mixed-use examples of IRRS, IRIS and IROSS implementation by year (AR: pg. 24)",
+  "    Table 1.4: Overview of data sources and tools, by year (AR: Figure 7, pg. 27 for country-led examples, pg. 49 for institution-led examples)",
   "",
-  "Country-led GAIN Data (AR.2):",
-  "    AR.2.1: Country-led implementation of the Recommendations by region (Figure 6, AR pg.25)",
-  "    AR.2.2: Overview Data Sources and Tools for Country-led Examples, by year (Figure 7, AR pg. 27)",
-  "    AR.2.3: Components of EGRISS Recommendations Most Frequently Used, by recommendation and type (AR pg.27)",
-  "    AR.2.4: Overview of Respondents Facing Challenges and Types of Challenges Identified (Figure 8, AR pg.28)",
-  "    AR.2.5: Breakdown of Implementation Challenges of Recommendations, by example lead (Not in AR)",
-  "    AR.2.7: Mentions of international partners in country-led implementations, by year (AR pg.28)",
+  "Section 2: Analysis of example implementation:",
+  "    Table 2.1: Count of countries reporting IRRS, IRIS and IROSS implementation examples, by region and year (Not in AR)",
+  "    Table 2.2: Country-led examples of IRRS, IRIS and IROSS implementation, by region (AR: Figure 6, pg. 25)",
+  "    Table 2.3: Institution-led examples, by level of implementation (AR: pg. 49)",
+  "    Table 2.4: Components of IRRS, IRIS and IROSS recommendations most frequently used, by recommendation and by example lead (AR: pg. 27)",
+  "    Table 2.5: Overview of respondents facing challenges with example implementation, including types of challenges faced (AR: Figure 8, pg. 28)",
+  "    Table 2.6: Overview of respondents facing challenges with IRRS, IRIS and IROSS application, including types of challenges faced (Not in AR)",
+  "    Table 2.7: Overview of country-led examples with implementation partnerships (AR: pg. 28)",
+  "    Table 2.8: Mentions of institution-led partnership organisations in country-led examples (AR: pg. 28)",
+  "    Table 2.9: Length of implementation (Not in AR)",
   "",
-  "Institution-led GAIN Data (AR.3):",
-  "    AR.3.1: Institutional Implementation Breakdown, by year (AR pg.49)",
-  "    AR.3.2: Institutional Implementation Breakdown, by implementation level (AR pg.49)",
+  "Section 3: Methodological developments:",
+  "    Table 3.1: Analysis of focal points on GAIN based on their connection to migration statistics (Not in AR)",
+  "    Table 3.2: Breakdown of identification questions used by example lead (Not in AR)",
   "",
-  "Future Examples GAIN Data (AR.4):",
-  "    AR.4.1: Future Examples Using Different Types of Data Source or Tool (Figure 14, AR pg.50)",
-  "    AR.4.2: Future Projects Overview, by source or tool, quarter, population and region (Not in AR)",
+  "Section 4: EGRISS publications:",
+  "    Table 4.1: Visibility of IRRS, IRIS and IROSS publications (Not in AR)",
+  "    Table 4.2: Impact of EGRISS-developed publications on example implementation(Not in AR)",
   "",
-  "GRF Pledges GAIN Data (AR.5):",
-  "    AR.5.1: GRF Data on Pledges Implementation, by stage, region, and entity type (Not in AR)",
+  "Section 5: GRF Pledges:",
+  "    Table 5.1: Update on implementation of GRF pledges on statistical inclusion (Not in AR)",
+  "    Table 5.2: Linkages of GAIN 2024 Examples with GRF pledges on statistical inclusion (Not in AR)",
   "",
-  "EGRISS Visibility (AR.6):",
-  "    AR.6.1: Interest in learning more about EGRISS membership, by country and year (Not in AR)",
-  "    AR.6.2: Publications Seen/Received for Example Implementation (Not in AR)",
-  "    AR.6.3: Overview of Respondents Using Publications and Impact of Publications (Not in AR)",
+  "Section 6: Future Examples:",
+  "    Table 6.1: Future examples using different types of data sources or tools (AR: Figure 14, pg. 50)",
+  "    Table 6.2 Overview of future example implementation, by planned start date, population of interest, region, example lead, and data sources (Not in AR)",
   "",
-  "Example Updates and Length (AR.7):",
-  "    AR.7.1: Length of implementation by use of recommendations and example type (Not in AR)",
-  "",
-  "Maps (AR.8):",
-  "    AR.8.1: Implementation Map"
+  "Section 7: Maps:",
+  "    Map 7.1: Map of overall country-led examples (Not in AR)",
+  "    7.2: Map of Overall Country-Led Examples Using the Recommendations (Not in AR)"
 )
 
 # Add each list item directly after the title on the first page
@@ -143,58 +146,52 @@ for(item in list_items) {
 
 # ar.1 tables
 word_doc <- word_doc %>% 
-  body_add_break() %>% body_add_flextable(ar.1.1) %>% body_add_break() %>%
+  body_add_break() %>% 
+  
+  # section 1
+  body_add_flextable(ar.1.1) %>% body_add_break() %>%
   body_add_flextable(ar.1.2) %>% body_add_break() %>%
   body_add_flextable(ar.1.3) %>% body_add_break() %>%
   body_add_flextable(ar.1.4) %>% body_add_break() %>%
-  # portrait → landscape for ar.1.5
-  body_end_section_portrait() %>%
-  body_add_flextable(ar.1.5) %>% body_add_break() %>%
-  # landscape → portrait for ar.2.1
-  body_end_section_landscape() %>%
-  body_add_flextable(ar.2.1) %>%
-  body_end_section_portrait() %>%
-  # portrait → landscape for ar.2.2
-  body_add_flextable(ar.2.2) %>%
-  body_add_break() %>%
-  body_end_section_landscape() %>%
-  # back in portrait
+  
+  # section 2
+  body_add_flextable(ar.2.1) %>% body_add_break() %>%
   body_add_flextable(ar.2.3) %>% body_add_break() %>%
   body_add_flextable(ar.2.4) %>% body_add_break() %>%
   body_add_flextable(ar.2.5) %>% body_add_break() %>%
   body_add_flextable(ar.2.6) %>% body_add_break() %>%
-  body_add_flextable(ar.2.7) %>%
+  body_add_flextable(ar.2.7) %>% body_add_break() %>%
+  body_add_flextable(ar.2.8) %>% body_add_break() %>%
+  # portrait → landscape for tables 2.9 and 3.1
+  body_end_section_portrait() %>%
+  body_add_flextable(ar.2.9) %>% body_add_break() %>%
   
-  # ar.3
-  body_add_break() %>%
+  # section 3
   body_add_flextable(ar.3.1) %>% body_add_break() %>%
-  body_add_flextable(ar.3.2) %>%
+  # landscape → portrait 
+  body_end_section_landscape() %>% 
+  body_add_flextable(ar.3.2) %>% body_add_break() %>%
   
-  # portrait → landscape for ar.4.2
-  body_add_break() %>%
-  body_add_flextable(ar.4.1) %>%
-  body_end_section_portrait() %>%
-  body_add_flextable(ar.4.2) %>%
-  body_add_break() %>%
-  body_end_section_landscape() %>%
-  # ar.5, ar.6
+  # section 4
+  body_add_flextable(ar.4.1) %>% body_add_break() %>%
+  body_add_flextable(ar.4.2) %>% body_add_break() %>%
+  
+  # section 5
   body_add_flextable(ar.5.1) %>% body_add_break() %>%
-  body_add_flextable(ar.6.1) %>% body_add_break() %>%
-  body_add_flextable(ar.6.2) %>% body_add_break() %>%
-  body_add_flextable(ar.6.3) %>% body_add_break() %>%
+  body_add_flextable(ar.5.2) %>% body_add_break() %>%
   
-  # ar.7 (landscape)
+  # section 6
+  body_add_flextable(ar.6.1) %>% body_add_break() %>%
+  # portrait → landscape for tables 6.2
   body_end_section_portrait() %>%
-  body_add_flextable(ar.7.1) %>%
-  body_add_break() %>%
-  body_end_section_landscape() %>%
-  # ar.8
-  body_add_flextable(ar.8.1) %>% body_add_break() %>%
-  body_add_flextable(ar.8.2) %>% body_add_break() %>%
-  # map
+  body_add_flextable(ar.6.2) %>% body_add_break() %>%
+  # landscape → portrait
+  body_end_section_landscape() %>% 
+  
+  # section 7: maps
   body_add_par("Map of Examples (2024)", style = "Image Caption") %>%
   body_add_img(src = "final_combined_maps.png", width = 5.5, height = 7.5) %>%
-  
+
   # finish
   body_end_section_continuous()
 
