@@ -12,14 +12,14 @@ suppressPackageStartupMessages({
 })
 
 # --------------------------- Paths -----------------------------------
-base_dir <- "C:/Users/Ladina/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024"
+# base_dir <- "C:/Users/Ladina/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024"
 
-in_roster_path  <- file.path(base_dir, "05 Data Collection", "Data Archive", "Final Version", "GRF06_roster.csv")
-in_main_path    <- file.path(base_dir, "10 Data", "Analysis Ready Files", "analysis_ready_main_roster.csv")
-in_group_path   <- file.path(base_dir, "10 Data", "Analysis Ready Files", "analysis_ready_group_roster.csv")
+in_roster_path  <- file.path(working_dir, "GRF06_roster.csv")
+in_main_path    <- file.path(working_dir, "analysis_ready_main_roster.csv")
+in_group_path   <- file.path(working_dir, "analysis_ready_group_roster.csv")
 
-out_dir         <- file.path(base_dir, "10 Data", "Analysis Ready Files")
-out_path        <- file.path(out_dir, "GRF06_roster_clean.csv")
+out_dir         <- file.path(working_dir, "Analysis Ready Files")
+out_path        <- file.path(working_dir, "GRF06_roster_clean.csv")
 
 # ----------------------- Read datasets --------------------------------
 grf06 <- readr::read_csv(in_roster_path, show_col_types = FALSE, guess_max = 100000)
@@ -169,8 +169,8 @@ suppressPackageStartupMessages({
 })
 
 # ---- Paths ----
-base_dir <- "C:/Users/Ladina/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024"
-in_clean <- file.path(base_dir, "10 Data", "Analysis Ready Files", "GRF06_roster_clean.csv")
+# base_dir <- "C:/Users/Ladina/UNHCR/EGRISS Secretariat - Documents/905 - Implementation of Recommendations/01_GAIN Survey/Integration & GAIN Survey/EGRISS GAIN Survey 2024"
+in_clean <- file.path(working_dir, "GRF06_roster_clean.csv")
 
 # ---- Read ----
 grf <- read_csv(in_clean, show_col_types = FALSE, guess_max = 100000)
