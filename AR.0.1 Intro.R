@@ -22,6 +22,7 @@ message("Working directory set to: ", getwd())
 library(dplyr)
 library(flextable)
 library(readr)
+library(readxl)
 library(writexl)
 library(officer)
 library(tidyr)
@@ -32,6 +33,7 @@ library(rnaturalearthdata)
 library(patchwork)  # For arranging plots
 library(magick)
 library(grid)
+library(zoo)
 
 # EGRISS Color Scheme
 primary_color <- "#4cc3c9"
