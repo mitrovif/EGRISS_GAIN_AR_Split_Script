@@ -1,0 +1,156 @@
+# ============================================================================================================
+# AR.5.1: Breakdown of GRF Pledges
+# ============================================================================================================
+
+# Load necessary libraries
+library(readxl)
+library(dplyr)
+library(flextable)
+
+# File paths
+updated_csv_path <- file.path(working_dir, "Stat_Inclusion_Pledges_Upd.xlsx")
+
+# Read the updated pledges file
+stat_pledges <- read.xlsx(updated_csv_path)
+
+# Clean data: fill missing region or entity‐type
+stat_pledges <- stat_pledges %>%
+  mutate(
+    region                  = ifelse(is.na(egriss_region), "Region/Country not Reported", egriss_region),
+    region                  = case_when(str_detect(region, "America") ~ "Americas", TRUE ~ region),
+    Submitting.Entity.Type  = ifelse(is.na(Submitting.Entity.Type), "Region/Country not Reported", Submitting.Entity.Type)
+  )
+
+# Prepare summaries ----------------------------------------------------------------------------------------
+
+# 1. Source_summary: overall counts by source_pledge
+source_summary <- stat_pledges %>%
+  group_by(source_pledge) %>%
+  summarise(
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
+  ) %>%
+  mutate(
+    `GRF Data on Pledges` = case_when(
+      source_pledge == 1 ~ "GRF Database",
+      source_pledge == 2 ~ "GAIN Survey Data",
+      TRUE               ~ "No Data Available"
+    )
+  ) %>%
+  select(`GRF Data on Pledges`, everything(), -source_pledge)
+
+# 2. Region summary
+region_summary <- stat_pledges %>%
+  group_by(region) %>%
+  summarise(
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
+  ) %>%
+  rename(`GRF Data on Pledges` = region)
+
+# 3. Entity summary
+entity_summary <- stat_pledges %>%
+  group_by(Submitting.Entity.Type) %>%
+  summarise(
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
+  ) %>%
+  rename(`GRF Data on Pledges` = Submitting.Entity.Type)
+
+# 4. Total row
+total_row <- stat_pledges %>%
+  summarise(
+    `GRF Data on Pledges`          = "Total",
+    `Planning stage`               = sum(stage_final == "Planning stage",    na.rm = TRUE),
+    `Implementation (In progress)` = sum(stage_final == "In progress",        na.rm = TRUE),
+    `Completed (Fulfilled)`        = sum(stage_final == "Fulfilled",          na.rm = TRUE),
+    Reported                       = sum(stage_final %in% c("Planning stage","In progress","Fulfilled"), na.rm = TRUE),
+    Total_Pledges                  = n()
+  )
+
+# Section headers
+source_header <- tibble(`GRF Data on Pledges` = "Source", .rows = 1)
+region_header <- tibble(`GRF Data on Pledges` = "Region", .rows = 1)
+entity_header <- tibble(`GRF Data on Pledges` = "Pledge Lead", .rows = 1)
+
+# Build final table ----------------------------------------------------------------------------------------
+
+merged_summary <- bind_rows(
+  source_header,
+  source_summary,
+  region_header,
+  region_summary,
+  entity_header,
+  entity_summary,
+  total_row
+) %>%
+  rename(`Total` = Total_Pledges) %>%
+  rename(`Updates on Global Refugee Forum (GRF) Pledges Progress` = `GRF Data on Pledges`)
+
+# Styling constants
+egriss_color         <- "#003366"
+section_header_color <- "#D9D9D9"
+
+# Create and style flextable -----------------------------------------------------------------------------
+
+ar.5.1 <- flextable(merged_summary) %>%
+  theme_vanilla() %>%
+  fontsize(size = 10, part = "all") %>%
+  bold(part = "header") %>%
+  bg(part = "header", bg = "#4cc3c9") %>%
+  border_outer(border = fp_border(color = "black", width = 2)) %>%
+  border_inner_h(part = "body", border = fp_border(color = "gray", width = 0.5)) %>%
+  autofit() %>%
+  set_table_properties(layout = "autofit", width = 0.6) %>%
+  # Style total row
+  bold(i = 1, part = "body") %>%
+  bg(i = 1, bg = egriss_color, part = "body") %>%
+  color(i = 1, color = "black", part = "body") %>%
+  # Style source header row only
+  bg(i = ~ `Updates on Global Refugee Forum (GRF) Pledges Progress` == "Data", bg = section_header_color, part = "body") %>%
+  # Optional: bold the section header text
+  bold(i = ~ `Updates on Global Refugee Forum (GRF) Pledges Progress` %in% c("Source","Region","Pledge Lead"), part = "body") %>%
+  bg(j = ~ Total, bg = "#c9daf8") %>%  # Highlight the total column
+  bg(i = 20, bg = "#3B71B3") %>%  # Highlight the total column
+  color(i = 20, color = "white", part = "body") %>%
+  bold(i = 20, part = "body") %>%
+  bg(bg = "gray", i = 1) %>%
+  bg(bg = "gray", i = 5) %>%
+  bg(bg = "gray", i = 13) %>%
+  # Footer
+  add_footer_row(
+    values = paste0(
+      "Table 5.1 is not featured in the 2024 Annual Report. Table is disaggregated by updates on GRF Statistical Inclusion Pledges progress, by data source, region of pledge origin, and pledge lead type."
+    ),
+    colwidths = ncol(merged_summary)
+  ) %>%
+  fontsize(size = 7, part = "footer") %>%
+  set_caption(
+    caption = as_paragraph(
+      as_chunk(
+        "Table 5.1: Update on implementation of GRF pledges on statistical inclusion",
+        props = fp_text(
+          font.family = "Helvetica",
+          font.size   = 10
+        )
+      )
+    )
+  )
+
+# Display the table
+print(ar.5.1)
+
+
+
+if (bExport == 1){
+  save_as_html(ar.5.1, path= "EGRISS GAIN Survey 2025/08 Output/13 Export Tables/ar.5.1.html") 
+}
